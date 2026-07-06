@@ -64,11 +64,8 @@ svg { display: block; }
 .nav-wrap { height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .brand { display: inline-flex; align-items: center; gap: 11px; color: inherit; text-decoration: none; font-size: 15px; font-weight: 800; letter-spacing: .14em; }
 .brand em { color: var(--blue-bright); font-style: normal; }
-.brand-mark { position: relative; display: inline-flex; width: 30px; height: 30px; align-items: end; justify-content: center; gap: 3px; border: 1px solid rgba(116, 180, 214, .42); border-radius: 50%; overflow: hidden; }
-.brand-mark span { display: block; width: 2px; height: 13px; background: var(--blue-bright); transform-origin: bottom; }
-.brand-mark span:first-child { transform: rotate(-42deg); }
-.brand-mark span:nth-child(2) { height: 18px; }
-.brand-mark span:last-child { transform: rotate(42deg); }
+.brand-mark { position: relative; display: inline-grid; width: 32px; height: 32px; place-items: center; color: var(--blue-bright); border: 1px solid rgba(116, 180, 214, .42); border-radius: 50%; background: radial-gradient(circle at 50% 25%, rgba(120, 184, 220, .12), transparent 62%); box-shadow: inset 0 0 0 3px rgba(120, 184, 220, .03); }
+.brand-mark svg { width: 24px; height: 24px; fill: currentColor; filter: drop-shadow(0 0 5px rgba(120, 184, 220, .2)); }
 .desktop-nav { display: flex; align-items: center; gap: 34px; margin-left: auto; }
 .desktop-nav a { color: rgba(255,255,255,.72); text-decoration: none; font-size: 13px; font-weight: 600; transition: color .2s; }
 .desktop-nav a:hover { color: var(--white); }
@@ -117,8 +114,8 @@ svg { display: block; }
 .product-window { position: relative; z-index: 3; overflow: hidden; min-height: 448px; border: 1px solid rgba(148,194,217,.2); border-radius: 11px; background: rgba(9,26,41,.86); box-shadow: 0 48px 90px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.04); backdrop-filter: blur(18px); }
 .window-bar { height: 49px; display: flex; justify-content: space-between; align-items: center; padding: 0 18px; border-bottom: 1px solid var(--dark-line); background: rgba(255,255,255,.018); }
 .window-brand { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.72); font-size: 9px; font-weight: 700; }
-.mini-mark { display: inline-flex; width: 18px; height: 18px; align-items: end; justify-content: center; gap: 2px; padding-bottom: 3px; border: 1px solid rgba(120,184,220,.3); border-radius: 50%; }
-.mini-mark i { display: block; width: 1px; height: 8px; background: var(--blue-bright); }.mini-mark i:first-child{transform:rotate(-40deg)}.mini-mark i:last-child{transform:rotate(40deg)}
+.mini-mark { display: inline-grid; width: 18px; height: 18px; place-items: center; color: var(--blue-bright); border: 1px solid rgba(120,184,220,.3); border-radius: 50%; background: rgba(120,184,220,.05); }
+.mini-mark svg { width: 14px; height: 14px; fill: currentColor; }
 .window-actions { display: flex; gap: 7px; }.window-actions span{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.18)}
 .product-body { display: flex; min-height: 399px; }
 .product-sidebar { width: 53px; flex: 0 0 53px; display: flex; flex-direction: column; align-items: center; gap: 19px; padding: 27px 0 18px; border-right: 1px solid var(--dark-line); }
