@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grabbit Orders</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell">
+      <section class="dashboard-panel">
+        <header class="dashboard-header">
+          <div>
+            <p class="dashboard-eyebrow">Grabbit Admin</p>
+            <h1 class="dashboard-title">Saved Orders</h1>
+            <p class="dashboard-copy">
+              Submitted orders and uploaded screenshots will appear here.
+            </p>
+          </div>
+          <a class="dashboard-link" href="/">Back to site</a>
+        </header>
+
+        <div class="dashboard-toolbar">
+          <button type="button" class="dashboard-button" id="refresh-orders-button">Refresh orders</button>
+          <button type="button" class="dashboard-button" id="availability-toggle-button">
+            Set Grabbit closed
+          </button>
+          <button type="button" class="dashboard-button dashboard-button-secondary" id="logout-button">
+            Log out
+          </button>
+          <p class="dashboard-meta" id="orders-meta">Loading orders...</p>
+        </div>
+
+        <p class="dashboard-status hidden" id="orders-status" role="status" aria-live="polite"></p>
+        <section class="admin-login-card hidden" id="admin-login-card">
+          <h2 class="order-card-title">Admin login</h2>
+          <p class="order-card-copy">
+            Enter your Grabbit admin password to view paid orders.
+          </p>
+          <form class="admin-login-form" id="admin-login-form">
+            <div class="input-shell">
+              <input
+                id="admin-password"
+                name="password"
+                type="password"
+                placeholder="Enter admin password"
+                required
+              />
+            </div>
+            <button type="submit" class="dashboard-button">Unlock orders</button>
+          </form>
+        </section>
+        <section class="orders-list" id="orders-list"></section>
+      </section>
+    </main>
+
+    <script src="orders.js"></script>
+  </body>
+</html>

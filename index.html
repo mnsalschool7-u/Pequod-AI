@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Pequod AI coordinates international trade workflows across customs, logistics, documentation, landed cost, and compliance."
+    />
+    <meta name="theme-color" content="#071624" />
+    <title>Pequod AI — AI-Powered Trade Operations Software</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <!-- Reusable icon symbols -->
+    <svg class="svg-sprite" aria-hidden="true">
+      <symbol id="icon-classify" viewBox="0 0 24 24">
+        <path d="M4 5.5h10M4 10h7M4 14.5h6M15.5 14.5l2 2 3.5-4" />
+        <rect x="2.5" y="2.5" width="19" height="19" rx="3" />
+      </symbol>
+      <symbol id="icon-compass" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8 4.8-2.2Z" />
+      </symbol>
+      <symbol id="icon-cost" viewBox="0 0 24 24">
+        <path d="M4 18V9m5 9V5m5 13v-6m5 6V3M2.5 21.5h19" />
+      </symbol>
+      <symbol id="icon-freight" viewBox="0 0 24 24">
+        <path d="M3 6h12v11H3zM15 10h3l3 3v4h-6z" /><circle cx="7" cy="18" r="2" /><circle cx="18" cy="18" r="2" />
+      </symbol>
+      <symbol id="icon-doc" viewBox="0 0 24 24">
+        <path d="M6 2.5h8l4 4v15H6zM14 2.5v5h4M9 12h6M9 16h4" />
+      </symbol>
+      <symbol id="icon-route" viewBox="0 0 24 24">
+        <circle cx="5" cy="18" r="2" /><circle cx="19" cy="6" r="2" /><path d="M7 18h3a2 2 0 0 0 2-2V8a2 2 0 0 1 2-2h3" />
+      </symbol>
+      <symbol id="icon-detect" viewBox="0 0 24 24">
+        <circle cx="10.5" cy="10.5" r="6.5" /><path d="m15.5 15.5 5 5M10.5 7.5v3.5M10.5 14h.01" />
+      </symbol>
+      <symbol id="icon-spark" viewBox="0 0 24 24">
+        <path d="m12 2 1.7 5.3L19 9l-5.3 1.7L12 16l-1.7-5.3L5 9l5.3-1.7L12 2ZM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z" />
+      </symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14M14 7l5 5-5 5" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="m5 12.5 4.3 4.3L19.5 6.5" />
+      </symbol>
+    </svg>
+
+    <header class="site-header" id="top">
+      <div class="container nav-wrap">
+        <a class="brand" href="#top" aria-label="Pequod AI home">
+          <span class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+          <span>PEQUOD <em>AI</em></span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href="#platform">Platform</a>
+          <a href="#workflow">How it works</a>
+          <a href="#stakeholders">Who it’s for</a>
+          <a href="#why-pequod">Why Pequod</a>
+        </nav>
+
+        <a class="button button-small button-light nav-cta" href="#waitlist">Join waitlist</a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+          <span></span><span></span>
+        </button>
+      </div>
+      <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+        <a href="#platform">Platform</a>
+        <a href="#workflow">How it works</a>
+        <a href="#stakeholders">Who it’s for</a>
+        <a href="#why-pequod">Why Pequod</a>
+        <a href="#waitlist">Join waitlist</a>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <!-- Hero -->
+      <section class="hero section-dark">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="container hero-layout">
+          <div class="hero-copy reveal">
+            <div class="eyebrow"><span></span> The intelligence layer for global trade</div>
+            <h1>AI-Powered Trade<br /><span>Operations Software</span></h1>
+            <p class="hero-lede">
+              Pequod AI coordinates international trade workflows across customs, logistics,
+              documentation, landed cost, and compliance.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#waitlist">
+                Join Waitlist
+                <svg aria-hidden="true"><use href="#icon-arrow"></use></svg>
+              </a>
+              <a class="button button-ghost" href="#demo">View Demo</a>
+            </div>
+            <div class="hero-trust" aria-label="Platform benefits">
+              <span><svg aria-hidden="true"><use href="#icon-check"></use></svg> One workspace</span>
+              <span><svg aria-hidden="true"><use href="#icon-check"></use></svg> End-to-end visibility</span>
+              <span><svg aria-hidden="true"><use href="#icon-check"></use></svg> AI-assisted decisions</span>
+            </div>
+          </div>
+
+          <div class="product-stage reveal" id="demo">
+            <div class="route-line route-line-one" aria-hidden="true"></div>
+            <div class="route-line route-line-two" aria-hidden="true"></div>
+            <div class="product-window">
+              <div class="window-bar">
+                <div class="window-brand">
+                  <span class="mini-mark"><i></i><i></i><i></i></span>
+                  <span>Pequod Workspace</span>
+                </div>
+                <div class="window-actions"><span></span><span></span><span></span></div>
+              </div>
+              <div class="product-body">
+                <aside class="product-sidebar" aria-label="Product preview navigation">
+                  <div class="sidebar-dot active"></div><div class="sidebar-dot"></div><div class="sidebar-dot"></div><div class="sidebar-dot"></div>
+                  <div class="sidebar-dot sidebar-bottom"></div>
+                </aside>
+                <div class="product-main">
+                  <div class="dashboard-head">
+                    <div>
+                      <span class="micro-label">LIVE SHIPMENT</span>
+                      <h2>PO-4821 · Shanghai → Newark</h2>
+                    </div>
+                    <span class="status-pill"><i></i> On track</span>
+                  </div>
+                  <div class="dashboard-grid">
+                    <article class="shipment-card">
+                      <div class="card-head"><span>Trade workflow</span><b>68%</b></div>
+                      <div class="progress-track"><span></span></div>
+                      <div class="milestone-row">
+                        <div class="milestone done"><i>✓</i><span>PO</span></div>
+                        <div class="milestone done"><i>✓</i><span>Docs</span></div>
+                        <div class="milestone active"><i></i><span>Freight</span></div>
+                        <div class="milestone"><i></i><span>Customs</span></div>
+                        <div class="milestone"><i></i><span>Delivery</span></div>
+                      </div>
+                    </article>
+                    <article class="metric-card">
+                      <span class="micro-label">LANDED COST</span>
+                      <strong>$48,320</strong>
+                      <small><b>+1.2%</b> vs. estimate</small>
+                    </article>
+                    <article class="ai-card">
+                      <div class="ai-card-title">
+                        <span><svg aria-hidden="true"><use href="#icon-spark"></use></svg></span>
+                        <div><b>Pequod signal</b><small>Action recommended</small></div>
+                      </div>
+                      <p>Commercial invoice quantity does not match the packing list.</p>
+                      <button type="button" tabindex="-1">Review discrepancy <span>→</span></button>
+                    </article>
+                    <article class="classification-card">
+                      <span class="micro-label">CLASSIFICATION</span>
+                      <div><strong>8471.30.0100</strong><span>97% confidence</span></div>
+                      <p>Portable automatic data processing machines</p>
+                    </article>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="floating-tag floating-tag-left"><span>7</span> documents synced</div>
+            <div class="floating-tag floating-tag-right"><i></i> Customs-ready</div>
+          </div>
+        </div>
+        <div class="hero-bottom-line">
+          <div class="container hero-bottom-inner">
+            <span>BUILT FOR THE NETWORK THAT MOVES GLOBAL TRADE</span>
+            <div><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Problem -->
+      <section class="problem-section">
+        <div class="container problem-layout">
+          <div class="section-heading reveal">
+            <div class="eyebrow eyebrow-dark"><span></span> The problem</div>
+            <h2>Global trade runs on<br /><em>fragmented systems.</em></h2>
+          </div>
+          <div class="problem-content reveal">
+            <p>
+              Every shipment depends on hundreds of details spread across emails, spreadsheets,
+              PDFs, customs systems, freight portals, and disconnected stakeholders.
+            </p>
+            <p>
+              Teams spend hours finding information, reconciling documents, and chasing updates—
+              while delays, compliance gaps, and hidden costs compound.
+            </p>
+          </div>
+        </div>
+        <div class="container fragmentation-map reveal" aria-label="Disconnected trade operations">
+          <div class="fragment-node"><svg aria-hidden="true"><use href="#icon-doc"></use></svg><span>PDFs & documents</span></div>
+          <span class="fragment-line"></span>
+          <div class="fragment-node"><span class="node-glyph">@</span><span>Email threads</span></div>
+          <span class="fragment-line"></span>
+          <div class="fragment-node"><span class="node-glyph">▦</span><span>Spreadsheets</span></div>
+          <span class="fragment-line"></span>
+          <div class="fragment-node"><svg aria-hidden="true"><use href="#icon-freight"></use></svg><span>Freight portals</span></div>
+          <span class="fragment-line"></span>
+          <div class="fragment-node"><svg aria-hidden="true"><use href="#icon-compass"></use></svg><span>Customs systems</span></div>
+          <span class="fragment-line"></span>
+          <div class="fragment-node"><span class="node-glyph">•••</span><span>Stakeholders</span></div>
+        </div>
+      </section>
+
+      <!-- Solution and feature grid -->
+      <section class="platform-section" id="platform">
+        <div class="container solution-intro">
+          <div class="solution-copy reveal">
+            <div class="eyebrow eyebrow-blue"><span></span> One intelligent workspace</div>
+            <h2>From disconnected data<br />to <em>coordinated action.</em></h2>
+          </div>
+          <p class="reveal">
+            Pequod unifies trade data, documents, compliance, and logistics into one AI-powered
+            workspace—giving every team a shared source of truth and a clear next step.
+          </p>
+        </div>
+
+        <div class="container feature-grid">
+          <article class="feature-card feature-card-wide reveal">
+            <div class="feature-icon"><svg aria-hidden="true"><use href="#icon-classify"></use></svg></div>
+            <span class="feature-number">01</span>
+            <h3>Customs Rulings &amp;<br />HS Classification</h3>
+            <p>Research rulings, validate product classifications, and build an auditable rationale with AI assistance.</p>
+            <div class="feature-visual classification-visual" aria-hidden="true">
+              <div><span>Suggested HS code</span><strong>8471.30.0100</strong></div>
+              <div class="confidence-ring"><span>97<small>%</small></span></div>
+            </div>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon"><svg aria-hidden="true"><use href="#icon-compass"></use></svg></div>
+            <span class="feature-number">02</span>
+            <h3>Incoterms &amp;<br />Compliance Guidance</h3>
+            <p>Understand responsibilities, risk transfer, and compliance requirements for every transaction.</p>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon"><svg aria-hidden="true"><use href="#icon-cost"></use></svg></div>
+            <span class="feature-number">03</span>
+            <h3>Landed Cost<br />Analysis</h3>
+            <p>Model duties, freight, fees, and taxes before goods move—then compare estimates to actuals.</p>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon"><svg aria-hidden="true"><use href="#icon-freight"></use></svg></div>
+            <span class="feature-number">04</span>
+            <h3>Freight<br />Intelligence</h3>
+            <p>Bring carrier updates, route context, transit risk, and shipment milestones into one clear view.</p>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon"><svg aria-hidden="true"><use href="#icon-doc"></use></svg></div>
+            <span class="feature-number">05</span>
+            <h3>Trade Document<br />Review</h3>
+            <p>Extract and compare commercial invoices, packing lists, bills of lading, and certificates.</p>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon"><svg aria-hidden="true"><use href="#icon-route"></use></svg></div>
+            <span class="feature-number">06</span>
+            <h3>Shipment<br />Coordination</h3>
+            <p>Connect tasks, owners, milestones, and communications from purchase order through delivery.</p>
+          </article>
+
+          <article class="feature-card reveal">
+            <div class="feature-icon"><svg aria-hidden="true"><use href="#icon-detect"></use></svg></div>
+            <span class="feature-number">07</span>
+            <h3>Inconsistency<br />Detection</h3>
+            <p>Surface mismatched quantities, values, codes, dates, and parties before they cause delays.</p>
+          </article>
+
+          <article class="feature-card feature-card-accent reveal">
+            <div class="feature-icon"><svg aria-hidden="true"><use href="#icon-spark"></use></svg></div>
+            <span class="feature-number">08</span>
+            <h3>AI Next-Step<br />Recommendations</h3>
+            <p>Turn complex trade context into prioritized, explainable actions for each shipment and team.</p>
+            <div class="recommendation-chip"><i></i> 3 actions ready for review</div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Workflow -->
+      <section class="workflow-section section-dark" id="workflow">
+        <div class="workflow-map" aria-hidden="true"></div>
+        <div class="container">
+          <div class="workflow-head reveal">
+            <div>
+              <div class="eyebrow"><span></span> One continuous workflow</div>
+              <h2>Intelligence at every handoff.</h2>
+            </div>
+            <p>Pequod keeps context connected as goods, documents, and decisions move across the trade lifecycle.</p>
+          </div>
+
+          <div class="workflow-track reveal" role="list" aria-label="Trade workflow stages">
+            <div class="workflow-step" role="listitem"><span>01</span><div class="workflow-icon">PO</div><strong>Purchase<br />Order</strong></div>
+            <div class="workflow-arrow"><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></div>
+            <div class="workflow-step" role="listitem"><span>02</span><div class="workflow-icon"><svg aria-hidden="true"><use href="#icon-doc"></use></svg></div><strong>Documents</strong></div>
+            <div class="workflow-arrow"><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></div>
+            <div class="workflow-step" role="listitem"><span>03</span><div class="workflow-icon"><svg aria-hidden="true"><use href="#icon-check"></use></svg></div><strong>Compliance</strong></div>
+            <div class="workflow-arrow"><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></div>
+            <div class="workflow-step" role="listitem"><span>04</span><div class="workflow-icon"><svg aria-hidden="true"><use href="#icon-freight"></use></svg></div><strong>Freight</strong></div>
+            <div class="workflow-arrow"><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></div>
+            <div class="workflow-step" role="listitem"><span>05</span><div class="workflow-icon"><svg aria-hidden="true"><use href="#icon-compass"></use></svg></div><strong>Customs</strong></div>
+            <div class="workflow-arrow"><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></div>
+            <div class="workflow-step" role="listitem"><span>06</span><div class="workflow-icon"><svg aria-hidden="true"><use href="#icon-route"></use></svg></div><strong>Delivery</strong></div>
+          </div>
+
+          <div class="workflow-caption reveal">
+            <svg aria-hidden="true"><use href="#icon-spark"></use></svg>
+            <p><strong>Pequod’s coordination layer</strong> continuously reviews data, detects risk, and recommends the next best action.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stakeholders -->
+      <section class="stakeholders-section" id="stakeholders">
+        <div class="container stakeholders-layout">
+          <div class="stakeholders-copy reveal">
+            <div class="eyebrow eyebrow-blue"><span></span> Built for the whole trade network</div>
+            <h2>One shared view.<br /><em>Every stakeholder aligned.</em></h2>
+            <p>Pequod gives each partner the context they need—without adding another disconnected portal.</p>
+            <a href="#waitlist" class="text-link">Bring your trade network together <svg aria-hidden="true"><use href="#icon-arrow"></use></svg></a>
+          </div>
+          <div class="stakeholder-grid reveal">
+            <article><span>IM</span><div><h3>Importers</h3><p>Control cost, risk, and delivery.</p></div></article>
+            <article><span>EX</span><div><h3>Exporters</h3><p>Prepare accurate, compliant shipments.</p></div></article>
+            <article><span>CB</span><div><h3>Customs Brokers</h3><p>Resolve classifications and filings faster.</p></div></article>
+            <article><span>FF</span><div><h3>Freight Forwarders</h3><p>Coordinate bookings and milestones.</p></div></article>
+            <article><span>SU</span><div><h3>Suppliers</h3><p>Deliver complete data and documents.</p></div></article>
+            <article><span>CA</span><div><h3>Carriers</h3><p>Keep shipment status connected.</p></div></article>
+            <article><span>WH</span><div><h3>Warehouses</h3><p>Prepare receiving and final delivery.</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Differentiation -->
+      <section class="different-section" id="why-pequod">
+        <div class="container">
+          <div class="different-heading reveal">
+            <div class="eyebrow"><span></span> Why Pequod is different</div>
+            <h2>More than another<br /><em>point solution.</em></h2>
+          </div>
+          <div class="different-grid">
+            <article class="not-card reveal">
+              <span class="not-mark">×</span><small>PEQUOD IS NOT</small>
+              <h3>Just a document reader</h3>
+              <p>Extracting fields is useful. Understanding how those fields affect the entire shipment is transformative.</p>
+            </article>
+            <article class="not-card reveal">
+              <span class="not-mark">×</span><small>PEQUOD IS NOT</small>
+              <h3>Just freight tracking</h3>
+              <p>Knowing where cargo is matters. Knowing what to do next—and why—moves trade forward.</p>
+            </article>
+            <article class="not-card reveal">
+              <span class="not-mark">×</span><small>PEQUOD IS NOT</small>
+              <h3>Just customs software</h3>
+              <p>Compliance is one critical stage in a workflow that starts long before entry and ends after delivery.</p>
+            </article>
+            <article class="is-card reveal">
+              <span class="is-mark"><svg aria-hidden="true"><use href="#icon-spark"></use></svg></span><small>PEQUOD IS</small>
+              <h3>The intelligent coordination layer</h3>
+              <p>One system connecting data, decisions, documents, and people across the full trade operation.</p>
+              <div class="is-card-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Waitlist form -->
+      <section class="waitlist-section" id="waitlist">
+        <div class="container waitlist-shell">
+          <div class="waitlist-copy reveal">
+            <div class="eyebrow"><span></span> Early access</div>
+            <h2>Help shape the future of<br /><em>global trade operations.</em></h2>
+            <p>Join importers, brokers, forwarders, and logistics teams building a more intelligent way to move goods across borders.</p>
+            <div class="waitlist-points">
+              <span><svg aria-hidden="true"><use href="#icon-check"></use></svg> Early product access</span>
+              <span><svg aria-hidden="true"><use href="#icon-check"></use></svg> Founder-led onboarding</span>
+              <span><svg aria-hidden="true"><use href="#icon-check"></use></svg> Influence the product roadmap</span>
+            </div>
+          </div>
+
+          <div class="form-card reveal">
+            <form id="waitlist-form" novalidate>
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="name">Name</label>
+                  <input id="name" name="name" type="text" autocomplete="name" placeholder="Your full name" required />
+                  <span class="field-error" id="name-error"></span>
+                </div>
+                <div class="form-field">
+                  <label for="email">Work email</label>
+                  <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required />
+                  <span class="field-error" id="email-error"></span>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="company">Company</label>
+                  <input id="company" name="company" type="text" autocomplete="organization" placeholder="Company name" required />
+                  <span class="field-error" id="company-error"></span>
+                </div>
+                <div class="form-field">
+                  <label for="role">Role</label>
+                  <select id="role" name="role" required>
+                    <option value="">Select your role</option>
+                    <option>Importer / Exporter</option>
+                    <option>Customs Broker</option>
+                    <option>Freight Forwarder</option>
+                    <option>Carrier / Warehouse</option>
+                    <option>Trade Compliance</option>
+                    <option>Supply Chain / Operations</option>
+                    <option>Other</option>
+                  </select>
+                  <span class="field-error" id="role-error"></span>
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="message">What’s your biggest trade operations challenge? <small>Optional</small></label>
+                <textarea id="message" name="message" rows="4" placeholder="Tell us what slows your team down..."></textarea>
+              </div>
+              <button class="button button-primary submit-button" type="submit">
+                Request early access
+                <svg aria-hidden="true"><use href="#icon-arrow"></use></svg>
+              </button>
+              <p class="form-note">No spam. Just thoughtful updates as we build.</p>
+            </form>
+            <div class="success-state" id="success-state" role="status" aria-live="polite" hidden>
+              <span><svg aria-hidden="true"><use href="#icon-check"></use></svg></span>
+              <h3 tabindex="-1">You’re on the list.</h3>
+              <p>Thanks for joining us. We’ll be in touch with early access updates soon.</p>
+              <button type="button" id="reset-form">Submit another response</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container footer-main">
+        <div>
+          <a class="brand" href="#top" aria-label="Pequod AI home">
+            <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span>PEQUOD <em>AI</em></span>
+          </a>
+          <p>Coordinating global trade with intelligence.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#platform">Platform</a><a href="#workflow">Workflow</a><a href="#stakeholders">Who it’s for</a><a href="#waitlist">Join waitlist</a>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span>© 2026 Pequod AI. All rights reserved.</span>
+        <span>Built for the future of global trade.</span>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
