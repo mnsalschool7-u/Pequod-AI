@@ -6,10 +6,6 @@ services:
     buildCommand: mkdir -p dist && cp index.html styles.css script.js dist/
     staticPublishPath: ./dist
     autoDeployTrigger: commit
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
     headers:
       - path: /*
         name: X-Content-Type-Options
