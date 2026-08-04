@@ -6,6 +6,8 @@ services:
     buildCommand: mkdir -p dist && cp index.html styles.css script.js dist/
     staticPublishPath: ./dist
     autoDeployTrigger: commit
+    domains:
+      - pequodai.app
     headers:
       - path: /*
         name: X-Content-Type-Options
