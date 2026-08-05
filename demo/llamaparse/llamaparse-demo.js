@@ -21,6 +21,12 @@ const demoApiBaseUrl =
 
 let previewUrl = "";
 
+const legacyParserHash = ["#parser", "output"].join(String.fromCharCode(45));
+
+if (window.location.hash === legacyParserHash) {
+  history.replaceState(null, "", "#parseroutput");
+}
+
 function setError(message = "") {
   formError.textContent = message;
   fileInput.setAttribute("aria-invalid", String(Boolean(message)));
