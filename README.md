@@ -59,7 +59,7 @@ The live LlamaParse call occurs in `server.js` inside `parsePdfWithLlamaParse()`
 
 ## Test with a PDF
 
-Use a TerraLux Himalayan salt lamp product-information PDF that includes product details such as product name, photo, salt body, wooden base, electrical cord, socket, switch, replaceable bulb, intended use, country of origin, voltage, or wattage if stated.
+Use a product-information PDF that includes details such as product name, photo, materials, components, electrical specifications, intended use, country of origin, voltage, or wattage if stated.
 
 Confirm:
 
