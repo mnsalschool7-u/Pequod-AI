@@ -1,10 +1,10 @@
 services:
   - type: web
     name: pequod-ai-trade-ops
-    runtime: node
+    runtime: static
     branch: codex/pequod-ai-deploy
-    buildCommand: npm ci
-    startCommand: npm start
+    buildCommand: mkdir -p dist/demo && cp index.html styles.css script.js dist/ && cp -R demo/llamaparse dist/demo/
+    staticPublishPath: ./dist
     autoDeployTrigger: commit
     domains:
       - pequodai.app
