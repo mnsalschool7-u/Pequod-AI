@@ -38,12 +38,19 @@
         </span>
         <span>PEQUOD <em>AI</em></span>
       </a>
+      <nav class="demo-nav" aria-label="Demo navigation">
+        <a href="/">Home</a>
+        <a href="#workspace">Workspace</a>
+        <a href="#parser-output">Parser output</a>
+      </nav>
       <span class="powered-label">Document processing powered by LlamaParse</span>
     </header>
 
     <main id="main-content">
       <!-- Demo hero and upload entry point. -->
       <section class="demo-hero">
+        <div class="demo-grid-bg" aria-hidden="true"></div>
+        <div class="demo-glow" aria-hidden="true"></div>
         <div>
           <p class="eyebrow"><span></span> Live document ingestion</p>
           <h1>Customs document ingestion demo</h1>
@@ -52,6 +59,11 @@
             to a live document parser, preserves the parsed structure, and prepares the output for downstream
             customs-classification analysis.
           </p>
+          <div class="demo-trust" aria-label="Demo guarantees">
+            <span>PDF-only upload</span>
+            <span>Server-side API key</span>
+            <span>Raw parser output preserved</span>
+          </div>
         </div>
         <div class="demo-note">
           <strong>Phase 1</strong>
@@ -59,7 +71,7 @@
         </div>
       </section>
 
-      <section class="demo-grid" aria-label="Pequod document ingestion demo workspace">
+      <section class="demo-grid" id="workspace" aria-label="Pequod document ingestion demo workspace">
         <!-- Left panel: original document preview and upload controls. -->
         <article class="panel upload-panel">
           <div class="panel-head">
@@ -139,7 +151,7 @@
       </section>
 
       <!-- Raw markdown is intentionally preserved for debugging and later extraction. -->
-      <section class="panel markdown-panel" aria-labelledby="markdown-heading">
+      <section class="panel markdown-panel" id="parser-output" aria-labelledby="markdown-heading">
         <div class="panel-head">
           <div>
             <span class="micro-label">Raw parser output</span>
@@ -149,6 +161,19 @@
         <pre id="markdown-output">Upload a PDF to see the live parser markdown response.</pre>
       </section>
     </main>
+
+    <footer class="demo-footer">
+      <div>
+        <a class="brand" href="/" aria-label="Pequod AI home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64"><use href="#icon-whale-tail"></use></svg>
+          </span>
+          <span>PEQUOD <em>AI</em></span>
+        </a>
+        <p>Coordinating global trade with intelligence.</p>
+      </div>
+      <a href="/">Back to landing page</a>
+    </footer>
 
     <script src="/demo/llamaparse/llamaparse-demo.js"></script>
   </body>
