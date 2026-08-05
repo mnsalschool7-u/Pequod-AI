@@ -18,6 +18,12 @@ const pokeApiToken = process.env.POKE_API_TOKEN || "";
 const databaseUrl = process.env.DATABASE_URL || "";
 
 const app = express();
+const demoCorsAllowedOrigins = new Set([
+  "https://pequodai.app",
+  "https://www.pequodai.app",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+]);
 const publicDir = __dirname;
 const dataDir = process.env.DATA_DIR
   ? path.resolve(process.env.DATA_DIR)
@@ -572,6 +578,29 @@ async function sendPokeNotification(order) {
 
   return true;
 }
+
+// Allow the static Pequod site to call the separate parser API without exposing credentials.
+app.use((req, res, next) => {
+  if (!req.path.startsWith("/api/demo/llamaparse")) {
+    return next();
+  }
+
+  const origin = req.headers.origin;
+
+  if (demoCorsAllowedOrigins.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+  }
+
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  return next();
+});
 
 app.use(express.json());
 app.use(express.static(publicDir));

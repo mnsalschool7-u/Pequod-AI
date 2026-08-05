@@ -16,6 +16,8 @@ const devStatus = document.querySelector("#dev-status");
 const devOutput = document.querySelector("#dev-output");
 const devComplete = document.querySelector("#dev-complete");
 const steps = Array.from(document.querySelectorAll("#processing-steps li"));
+const demoApiBaseUrl =
+  window.location.hostname === "pequodai.app" ? "https://pequod-ai-parser-api.onrender.com" : "";
 
 let previewUrl = "";
 
@@ -168,7 +170,7 @@ form.addEventListener("submit", async (event) => {
     setStep("submitting");
     setStatus("Submitting", "idle");
 
-    const response = await fetch("/api/demo/llamaparse", {
+    const response = await fetch(`${demoApiBaseUrl}/api/demo/llamaparse`, {
       method: "POST",
       body,
     });

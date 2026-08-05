@@ -15,3 +15,13 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+  - type: web
+    name: pequod-ai-parser-api
+    runtime: node
+    branch: codex/pequod-ai-deploy
+    buildCommand: npm ci
+    startCommand: npm start
+    autoDeployTrigger: commit
+    envVars:
+      - key: LLAMA_CLOUD_API_KEY
+        sync: false
