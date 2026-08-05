@@ -57,6 +57,33 @@ const upload = multer({
   },
 });
 
+const llamaParseUploadsDir = path.join(uploadsDir, "llamaparse");
+fs.mkdirSync(llamaParseUploadsDir, { recursive: true });
+
+const llamaParseUpload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, callback) => callback(null, llamaParseUploadsDir),
+    filename: (_req, file, callback) => {
+      const extension = path.extname(file.originalname).toLowerCase() || ".pdf";
+      callback(null, `${Date.now()}-${crypto.randomUUID()}${extension}`);
+    },
+  }),
+  limits: {
+    fileSize: 15 * 1024 * 1024,
+  },
+  fileFilter: (_req, file, callback) => {
+    const isPdfMime = file.mimetype === "application/pdf";
+    const isPdfName = path.extname(file.originalname).toLowerCase() === ".pdf";
+
+    if (isPdfMime && isPdfName) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error("Only PDF files are supported for the LlamaParse demo."));
+  },
+});
+
 const smtpConfigured = Boolean(process.env.SMTP_USER && process.env.SMTP_PASS && notificationEmail);
 const mailTransport = smtpConfigured
   ? nodemailer.createTransport({
@@ -101,6 +128,79 @@ function escapeXml(value = "") {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
+}
+
+function getMarkdownPages(result) {
+  const pages = result?.markdown?.pages;
+
+  if (!Array.isArray(pages)) {
+    return [];
+  }
+
+  return pages.map((page, index) => ({
+    pageNumber: page.page || page.page_number || index + 1,
+    markdown: page.markdown || "",
+  }));
+}
+
+function getSafeLlamaError(error) {
+  if (!error) {
+    return "LlamaParse request failed.";
+  }
+
+  if (error.status) {
+    return `LlamaParse request failed with status ${error.status}.`;
+  }
+
+  if (error.name === "PollingTimeoutError") {
+    return "LlamaParse timed out before the document finished processing.";
+  }
+
+  return error.message || "LlamaParse request failed.";
+}
+
+async function parsePdfWithLlamaParse(filePath) {
+  if (!process.env.LLAMA_CLOUD_API_KEY) {
+    const error = new Error("LLAMA_CLOUD_API_KEY is not configured on the server.");
+    error.statusCode = 503;
+    throw error;
+  }
+
+  const { default: LlamaCloudDefault, LlamaCloud } = await import("@llamaindex/llama-cloud");
+  const LlamaCloudClient = LlamaCloudDefault || LlamaCloud;
+  const client = new LlamaCloudClient();
+
+  const uploadedFile = await client.files.create({
+    file: fs.createReadStream(filePath),
+    purpose: "parse",
+  });
+
+  const result = await client.parsing.parse(
+    {
+      file_id: uploadedFile.id,
+      tier: "agentic",
+      version: "latest",
+      expand: ["markdown"],
+    },
+    {
+      pollingInterval: 2000,
+      timeout: 120000,
+    }
+  );
+
+  const pages = getMarkdownPages(result);
+
+  return {
+    submitted: true,
+    fileId: uploadedFile.id,
+    jobId: result?.job?.id || null,
+    status: result?.job?.status || "UNKNOWN",
+    outputFormat: pages.length > 0 ? "markdown" : "unknown",
+    pagesProcessed: pages.length || null,
+    markdown: pages.map((page) => `<!-- Page ${page.pageNumber} -->\n${page.markdown}`).join("\n\n"),
+    pages,
+    completed: result?.job?.status === "COMPLETED",
+  };
 }
 
 function readOrders() {
@@ -627,6 +727,30 @@ app.post("/api/event-food", upload.single("eventScreenshot"), async (req, res) =
   } catch (error) {
     console.error("Event food notification failed:", error.message);
     return res.json({ ...submission, notificationSent: false });
+  }
+});
+
+// LlamaParse demo: accepts a PDF, sends it to the real LlamaCloud service, and returns parsed markdown.
+app.post("/api/demo/llamaparse", llamaParseUpload.single("document"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "Please upload a PDF document." });
+  }
+
+  try {
+    const parseResult = await parsePdfWithLlamaParse(req.file.path);
+
+    return res.json({
+      originalName: req.file.originalname,
+      size: req.file.size,
+      ...parseResult,
+    });
+  } catch (error) {
+    console.error("LlamaParse demo failed:", getSafeLlamaError(error));
+    return res.status(error.statusCode || 500).json({ error: getSafeLlamaError(error) });
+  } finally {
+    fs.promises.unlink(req.file.path).catch(() => {
+      // Temporary upload cleanup is best-effort and should never leak document contents to logs.
+    });
   }
 });
 

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Pequod AI live document ingestion demo for customs-classification workflows."
+    />
+    <meta name="theme-color" content="#071624" />
+    <title>Pequod AI | Document Ingestion Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/demo/llamaparse/llamaparse-demo.css" />
+  </head>
+  <body class="llamaparse-page">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <!-- Pequod brand mark reused for a consistent demo experience. -->
+    <svg class="svg-sprite" aria-hidden="true">
+      <symbol id="icon-whale-tail" viewBox="0 0 64 64">
+        <path class="tail-splash" d="M12 44C5.8 42.1 2.9 37 3.8 31M9 27.6l-2-2.8M52.8 43.2c6-2.5 8.5-7.8 6.9-13.7M55 25.8l1.6-3" />
+        <path class="tail-fluke" d="M31.5 36.8C25.7 29.3 18.2 24.2 6 22.8c1.2 9.5 8.3 15.7 19.8 18 2.4.5 4.4-1.2 5.7-4ZM32.5 36.5C38 28.2 45 20.7 58 20c-.3 10.1-7.5 17.5-20 20.5-2.4.6-4.2-1.1-5.5-4Z" />
+        <path class="tail-stock" d="M27.8 39.5c2.5 5.2 2.3 9.7-1.4 14.2h11.2c-3.7-4.5-3.9-9-1.4-14.2-1.5 1.6-2.8 2.4-4.2 2.4s-2.7-.8-4.2-2.4Z" />
+        <path class="tail-water" d="M6.5 55.8c5.8-2 11.4-2 17.2 0 5.6-2 11.2-2 16.8 0 5.8-2 11.4-2 17.2 0M17 60c5-1.5 9.8-1.5 14.8 0 5-1.5 9.8-1.5 14.8 0" />
+      </symbol>
+    </svg>
+
+    <header class="demo-header">
+      <a class="brand" href="/" aria-label="Pequod AI home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><use href="#icon-whale-tail"></use></svg>
+        </span>
+        <span>PEQUOD <em>AI</em></span>
+      </a>
+      <span class="powered-label">Document processing powered by LlamaParse</span>
+    </header>
+
+    <main id="main-content">
+      <!-- Demo hero and upload entry point. -->
+      <section class="demo-hero">
+        <div>
+          <p class="eyebrow"><span></span> Live document ingestion</p>
+          <h1>Customs document ingestion demo</h1>
+          <p>
+            Upload a TerraLux Himalayan salt lamp product-information PDF. Pequod sends the real file
+            to a live document parser, preserves the parsed structure, and prepares the output for downstream
+            customs-classification analysis.
+          </p>
+        </div>
+        <div class="demo-note">
+          <strong>Phase 1</strong>
+          <span>Live PDF upload, parse submission, completion polling, and markdown output.</span>
+        </div>
+      </section>
+
+      <section class="demo-grid" aria-label="Pequod document ingestion demo workspace">
+        <!-- Left panel: original document preview and upload controls. -->
+        <article class="panel upload-panel">
+          <div class="panel-head">
+            <div>
+              <span class="micro-label">Original document</span>
+              <h2>PDF upload</h2>
+            </div>
+            <span class="status-chip" id="file-status">No file selected</span>
+          </div>
+
+          <form id="parse-form" class="upload-form">
+            <label class="drop-zone" id="drop-zone" for="document-file">
+              <input id="document-file" name="document" type="file" accept="application/pdf,.pdf" required />
+              <span class="drop-icon" aria-hidden="true">↑</span>
+              <strong>Select or drop a PDF</strong>
+              <small>PDF only, up to 15 MB. The API key never leaves the server.</small>
+            </label>
+            <p class="form-error" id="form-error" role="alert"></p>
+            <button class="button button-primary" type="submit">Parse document</button>
+          </form>
+
+          <div class="pdf-preview" id="pdf-preview" hidden>
+            <iframe id="pdf-frame" title="Uploaded PDF preview"></iframe>
+          </div>
+        </article>
+
+        <!-- Right panel: processing states and response metadata. -->
+        <article class="panel result-panel">
+          <div class="panel-head">
+            <div>
+              <span class="micro-label">Document ingestion</span>
+              <h2>Live parser status</h2>
+            </div>
+            <span class="status-chip idle" id="parse-status">Waiting</span>
+          </div>
+
+          <ol class="processing-steps" id="processing-steps" aria-label="Processing states">
+            <li data-step="uploading">Uploading document</li>
+            <li data-step="submitting">Submitting document to parser</li>
+            <li data-step="parsing">Parsing document structure</li>
+            <li class="is-future" data-step="extracting">Extracting product attributes <span>Phase 2</span></li>
+            <li class="is-future" data-step="validating">Validating extracted fields <span>Phase 2</span></li>
+            <li class="is-future" data-step="profile">Generating customs-retrieval profile <span>Phase 3</span></li>
+            <li data-step="complete">Complete</li>
+          </ol>
+
+          <dl class="result-facts">
+            <div>
+              <dt>Source file</dt>
+              <dd id="source-file">Not uploaded yet</dd>
+            </div>
+            <div>
+              <dt>Pages processed</dt>
+              <dd id="pages-processed">Not available</dd>
+            </div>
+            <div>
+              <dt>Parser</dt>
+              <dd>Live parser</dd>
+            </div>
+            <div>
+              <dt>Output</dt>
+              <dd id="output-format">Not available</dd>
+            </div>
+          </dl>
+
+          <details class="developer-box" open>
+            <summary>Developer verification</summary>
+            <ul>
+              <li>Parser request submitted: <span id="dev-submitted">No</span></li>
+              <li>Parse job ID: <span id="dev-job-id">Not available</span></li>
+              <li>Current job status: <span id="dev-status">Waiting</span></li>
+              <li>Output format returned: <span id="dev-output">Not available</span></li>
+              <li>Processing completed successfully: <span id="dev-complete">No</span></li>
+            </ul>
+          </details>
+        </article>
+      </section>
+
+      <!-- Raw markdown is intentionally preserved for debugging and later extraction. -->
+      <section class="panel markdown-panel" aria-labelledby="markdown-heading">
+        <div class="panel-head">
+          <div>
+            <span class="micro-label">Raw parser output</span>
+            <h2 id="markdown-heading">Parsed markdown</h2>
+          </div>
+        </div>
+        <pre id="markdown-output">Upload a PDF to see the live parser markdown response.</pre>
+      </section>
+    </main>
+
+    <script src="/demo/llamaparse/llamaparse-demo.js"></script>
+  </body>
+</html>
