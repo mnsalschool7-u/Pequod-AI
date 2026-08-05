@@ -63,7 +63,8 @@ svg { display: block; }
 }
 .nav-wrap { height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
 .brand { display: inline-flex; align-items: center; gap: 11px; color: inherit; text-decoration: none; font-size: 15px; font-weight: 800; letter-spacing: .14em; }
-.brand em { color: var(--blue-bright); font-style: normal; }
+.brand-name { color: var(--blue-bright); }
+.brand em { color: currentColor; font-style: normal; }
 .brand-mark { position: relative; display: inline-grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; color: var(--blue-bright); }
 .brand-mark img { width: 38px; height: 34px; object-fit: contain; border-radius: 8px; filter: drop-shadow(0 0 10px rgba(120, 184, 220, .24)); }
 .brand-mark svg { width: 38px; height: 38px; fill: currentColor; filter: drop-shadow(0 0 6px rgba(120, 184, 220, .2)); }
