@@ -165,6 +165,19 @@ function getSafeLlamaError(error) {
   return error.message || "LlamaParse request failed.";
 }
 
+function withTimeout(promise, timeoutMs, message) {
+  let timeoutId;
+  const timeout = new Promise((_resolve, reject) => {
+    timeoutId = setTimeout(() => {
+      const error = new Error(message);
+      error.statusCode = 504;
+      reject(error);
+    }, timeoutMs);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+}
+
 async function parsePdfWithLlamaParse(filePath) {
   if (!process.env.LLAMA_CLOUD_API_KEY) {
     const error = new Error("LLAMA_CLOUD_API_KEY is not configured on the server.");
@@ -176,22 +189,30 @@ async function parsePdfWithLlamaParse(filePath) {
   const LlamaCloudClient = LlamaCloudDefault || LlamaCloud;
   const client = new LlamaCloudClient();
 
-  const uploadedFile = await client.files.create({
-    file: fs.createReadStream(filePath),
-    purpose: "parse",
-  });
+  const uploadedFile = await withTimeout(
+    client.files.create({
+      file: fs.createReadStream(filePath),
+      purpose: "parse",
+    }),
+    30000,
+    "The document upload to LlamaParse timed out."
+  );
 
-  const result = await client.parsing.parse(
-    {
-      file_id: uploadedFile.id,
-      tier: "agentic",
-      version: "latest",
-      expand: ["markdown"],
-    },
-    {
-      pollingInterval: 2000,
-      timeout: 120000,
-    }
+  const result = await withTimeout(
+    client.parsing.parse(
+      {
+        file_id: uploadedFile.id,
+        tier: "agentic",
+        version: "latest",
+        expand: ["markdown"],
+      },
+      {
+        pollingInterval: 2000,
+        timeout: 90000,
+      }
+    ),
+    105000,
+    "LlamaParse timed out before the document finished processing."
   );
 
   const pages = getMarkdownPages(result);
