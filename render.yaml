@@ -3,7 +3,7 @@ services:
     name: pequod-ai-trade-ops
     runtime: static
     branch: codex/pequod-ai-deploy
-    buildCommand: mkdir -p dist/demo && cp index.html styles.css script.js dist/ && cp -R demo/llamaparse dist/demo/
+    buildCommand: mkdir -p dist/demo dist/assets && cp index.html styles.css script.js dist/ && cp -R demo/llamaparse dist/demo/ && cp -R assets/. dist/assets/
     staticPublishPath: ./dist
     autoDeployTrigger: commit
     domains:
