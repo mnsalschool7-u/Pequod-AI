@@ -90,12 +90,12 @@
               <small>PDF only, up to 15 MB. The API key never leaves the server.</small>
             </label>
             <fieldset class="index-option">
-              <legend>Customs ruling index</legend>
+              <legend>Customs ruling retrieval</legend>
               <label>
                 <input id="use-customs-index" name="useCustomsIndex" type="checkbox" disabled />
-                <span>Search connected customs ruling index after parsing</span>
+                <span>Search public customs rulings after parsing</span>
               </label>
-              <small id="index-status-message">Checking customs index connection...</small>
+              <small id="index-status-message">Checking customs ruling search...</small>
             </fieldset>
             <p class="form-error" id="form-error" role="alert"></p>
             <button class="button button-primary" type="submit">Parse document</button>
@@ -207,7 +207,7 @@
             <span class="micro-label">Customs precedent retrieval</span>
             <h2 id="retrieval-heading">Generated ruling search profile</h2>
           </div>
-          <span class="status-chip idle" id="retrieval-status">Not connected</span>
+          <span class="status-chip idle" id="retrieval-status">Ready</span>
         </div>
         <div class="retrieval-layout">
           <div>
@@ -222,7 +222,7 @@
           <div>
             <h3>Retrieval results</h3>
             <div class="retrieval-results" id="retrieval-results">
-              No customs ruling index has been connected yet.
+              Public customs ruling search will run after parsing.
             </div>
           </div>
         </div>

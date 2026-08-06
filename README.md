@@ -25,9 +25,9 @@ LLAMA_CLOUD_INDEX_ID=optional_customs_ruling_index_id
 PORT=3000
 ```
 
-`LLAMA_CLOUD_INDEX_ID` is optional. When it is not set, the demo still parses the uploaded PDF, extracts a structured product record, and generates the customs retrieval query, but it does not show ruling matches.
+`LLAMA_CLOUD_INDEX_ID` is optional. When it is not set, the demo still parses the uploaded PDF, extracts a structured product record, generates the customs retrieval query, and searches public CBP CROSS rulings.
 
-The demo checks `/api/demo/llamaparse/index-status` to determine whether the server side index option should be enabled. The browser never receives the LlamaCloud API key. The index ID is only shown in masked form.
+The demo checks `/api/demo/llamaparse/index-status` to determine whether customs ruling search is available. The browser never receives the LlamaCloud API key. If a LlamaCloud index ID is configured, the index ID is only shown in masked form.
 
 Optional existing variables are documented in `.env.example`.
 
@@ -61,9 +61,9 @@ It supports the Pequod document workflow:
 5. Return and display markdown from LlamaParse.
 6. Extract document supported product facts into a structured record.
 7. Generate a customs retrieval profile from the extracted facts.
-8. Retrieve matching customs ruling documents from LlamaParse Index when `LLAMA_CLOUD_INDEX_ID` is configured.
+8. Retrieve matching customs ruling documents from public CBP CROSS search, or from LlamaCloud Index when `LLAMA_CLOUD_INDEX_ID` is configured.
 
-The live LlamaParse parse call occurs in `server.js` inside `parsePdfWithLlamaParse()`. The live LlamaParse Index retrieval call occurs in `retrieveCustomsPrecedents()`.
+The live LlamaParse parse call occurs in `server.js` inside `parsePdfWithLlamaParse()`. Customs retrieval occurs in `retrieveCustomsPrecedents()`. Without `LLAMA_CLOUD_INDEX_ID`, that function queries public CBP CROSS search. With `LLAMA_CLOUD_INDEX_ID`, it uses LlamaCloud Index.
 
 ## Test with a PDF
 
@@ -77,20 +77,21 @@ Confirm:
 * The markdown output changes based on the uploaded document.
 * The structured product table uses only facts supported by the uploaded document.
 * The customs retrieval profile changes based on the extracted product facts.
-* The customs ruling index option is enabled only when `LLAMA_CLOUD_INDEX_ID` exists on the server.
-* If `LLAMA_CLOUD_INDEX_ID` is configured, retrieval returns real index results.
-* If `LLAMA_CLOUD_INDEX_ID` is not configured, the page states that no customs ruling index has been connected yet.
+* Public CBP CROSS search is available without `LLAMA_CLOUD_INDEX_ID`.
+* If `LLAMA_CLOUD_INDEX_ID` is configured, retrieval returns real LlamaCloud Index results.
+* If `LLAMA_CLOUD_INDEX_ID` is not configured, retrieval returns real public CBP CROSS results when matches are available.
 * Missing API keys, invalid files, failed jobs, and timeouts show user facing errors.
 * Browser console and server logs do not expose the API key or full document contents.
 
 ## Known limitations
 
 * Structured extraction is conservative and rule based for this demo.
-* Customs precedent retrieval requires a real LlamaParse Index containing approved customs ruling documents.
-* The demo does not invent rulings, HS codes, similarity scores, or classification conclusions.
+* Public CBP CROSS search depends on CBP availability and the search terms generated from the parsed product record.
+* LlamaCloud Index retrieval still requires a real LlamaCloud Index containing approved customs ruling documents.
+* The demo does not invent rulings, HS codes, or classification conclusions. Public CBP scores are transparent Pequod match confidence scores based on search rank and keyword overlap.
 * Uploads are limited to PDFs up to 15 MB.
 * Temporary uploads are deleted after parsing completes or fails.
 
 ## Customs ruling retrieval layer
 
-Create or connect a trusted customs ruling corpus or approved CBP ruling source in LlamaParse Index, then set `LLAMA_CLOUD_INDEX_ID` on the Render backend service. The retrieval layer uses only the structured product record derived from the uploaded document, displays query concepts transparently, and returns real index results when available.
+The default retrieval layer searches public CBP CROSS rulings using only the structured product record derived from the uploaded document. It displays query concepts transparently and returns real CBP results when available. For a private or curated ruling corpus, create a trusted customs ruling corpus in LlamaCloud Index, then set `LLAMA_CLOUD_INDEX_ID` on the Render backend service.

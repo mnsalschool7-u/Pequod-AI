@@ -42,13 +42,15 @@ async function loadIndexStatus() {
     if (status.connected) {
       useCustomsIndex.disabled = false;
       useCustomsIndex.checked = true;
-      indexStatusMessage.textContent = `Connected server side index ${status.maskedIndexId}.`;
+      indexStatusMessage.textContent = status.maskedIndexId
+        ? `Connected server side index ${status.maskedIndexId}.`
+        : "Public CBP CROSS ruling search is available.";
       return;
     }
 
     useCustomsIndex.disabled = true;
     useCustomsIndex.checked = false;
-    indexStatusMessage.textContent = "No server side customs ruling index is connected yet.";
+    indexStatusMessage.textContent = "Customs ruling search is unavailable right now.";
   } catch (_error) {
     useCustomsIndex.disabled = true;
     useCustomsIndex.checked = false;
@@ -189,10 +191,10 @@ function resetAnalysisPanels() {
   structuredCount.textContent = "Ready";
   recordTableBody.innerHTML = `<tr><td colspan="5">Parse the selected PDF to extract document supported product facts.</td></tr>`;
   attentionList.innerHTML = "<li>Parse the selected PDF to identify missing classification information.</li>";
-  retrievalStatus.textContent = "Not connected";
+  retrievalStatus.textContent = "Ready";
   retrievalStatus.className = "status-chip idle";
   profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
-  retrievalResults.textContent = "No customs ruling index has been connected yet.";
+  retrievalResults.textContent = "Public customs ruling search will run after parsing.";
 }
 
 function escapeHtml(value = "") {
@@ -280,26 +282,33 @@ function renderRetrievalProfile(profile) {
 
 function renderRetrievalResults(retrieval) {
   if (!retrieval?.connected) {
-    retrievalStatus.textContent = "Not connected";
+    retrievalStatus.textContent = "Unavailable";
     retrievalStatus.className = "status-chip idle";
-    retrievalResults.textContent = retrieval?.message || "No customs ruling index has been connected yet.";
+    retrievalResults.textContent = retrieval?.message || "Customs ruling search is unavailable right now.";
     return;
   }
 
-  retrievalStatus.textContent = "Connected";
+  retrievalStatus.textContent = retrieval.provider || "Connected";
   retrievalStatus.className = "status-chip success";
 
   if (!Array.isArray(retrieval.results) || retrieval.results.length === 0) {
-    retrievalResults.textContent = "The customs ruling index returned no matching documents.";
+    retrievalResults.textContent = retrieval.message || "Customs ruling search returned no matching documents.";
     return;
   }
 
   retrievalResults.innerHTML = retrieval.results
     .map((result, index) => `
       <article class="retrieval-card">
-        <span>Result ${index + 1}</span>
+        <span>${escapeHtml(result.rulingNumber || `Result ${index + 1}`)}</span>
+        <h4>${escapeHtml(result.title || `Result ${index + 1}`)}</h4>
         <p>${escapeHtml(result.content)}</p>
-        <small>Score: ${escapeHtml(result.score ?? "Not available")} | Rerank: ${escapeHtml(result.rerankScore ?? "Not available")}</small>
+        <small>
+          ${escapeHtml(result.scoreLabel || "Score")}: ${escapeHtml(result.score ?? "Not available")}
+          ${result.rulingDate ? ` | Date: ${escapeHtml(result.rulingDate.slice(0, 10))}` : ""}
+          ${Array.isArray(result.tariffs) && result.tariffs.length > 0 ? ` | HTSUS noted: ${escapeHtml(result.tariffs.join(", "))}` : ""}
+        </small>
+        <small>${escapeHtml(result.scoreBasis || "")}</small>
+        ${result.url ? `<a href="${escapeHtml(result.url)}" target="_blank" rel="noreferrer">Open CBP ruling</a>` : ""}
       </article>
     `)
     .join("");
