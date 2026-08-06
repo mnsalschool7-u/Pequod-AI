@@ -16,8 +16,7 @@ const devStatus = document.querySelector("#dev-status");
 const devOutput = document.querySelector("#dev-output");
 const devComplete = document.querySelector("#dev-complete");
 const steps = Array.from(document.querySelectorAll("#processing-steps li"));
-const demoApiBaseUrl =
-  window.location.hostname === "pequodai.app" ? "https://pequod-ai-parser-api.onrender.com" : "";
+const demoApiBaseUrl = "https://pequod-ai-parser-api.onrender.com";
 
 let previewUrl = "";
 
