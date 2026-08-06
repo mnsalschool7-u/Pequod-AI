@@ -148,17 +148,17 @@
           <section class="product-visual-card" aria-labelledby="product-visual-heading">
             <div>
               <span class="micro-label">Product visual</span>
-              <h3 id="product-visual-heading">Product photo source</h3>
+              <h3 id="product-visual-heading">Extracted product photo</h3>
               <p id="product-visual-note">
-                Select a PDF to preview the document visual used for product review.
+                Parse a PDF to extract an embedded product image from the document.
               </p>
             </div>
             <div class="product-visual-preview">
-              <iframe id="product-visual-frame" title="Product visual from uploaded PDF" hidden></iframe>
+              <img id="product-visual-image" alt="Extracted product image from uploaded PDF" hidden />
               <div class="product-visual-empty" id="product-visual-empty" aria-live="polite">
                 <span aria-hidden="true">◒</span>
-                <strong>No product visual loaded</strong>
-                <small>The demo will show a document sourced preview when a PDF is selected.</small>
+                <strong>No product photo extracted yet</strong>
+                <small>The demo will show an embedded image if the parser returns one from the PDF.</small>
               </div>
             </div>
             <dl class="product-visual-facts">
@@ -169,6 +169,10 @@
               <div>
                 <dt>Image status</dt>
                 <dd id="product-visual-status">Waiting</dd>
+              </div>
+              <div>
+                <dt>Images found</dt>
+                <dd id="product-visual-count">0</dd>
               </div>
             </dl>
           </section>

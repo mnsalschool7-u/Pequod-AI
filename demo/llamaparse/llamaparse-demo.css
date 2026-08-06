@@ -556,9 +556,12 @@
   position: relative;
 }
 
-.product-visual-preview iframe {
-  border: 0;
-  height: 260px;
+.product-visual-preview img {
+  display: block;
+  height: auto;
+  max-height: 320px;
+  object-fit: contain;
+  padding: 0.8rem;
   width: 100%;
 }
 

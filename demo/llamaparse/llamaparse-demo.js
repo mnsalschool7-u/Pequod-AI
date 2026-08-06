@@ -8,11 +8,12 @@ const useCustomsIndex = document.querySelector("#use-customs-index");
 const indexStatusMessage = document.querySelector("#index-status-message");
 const pdfPreview = document.querySelector("#pdf-preview");
 const pdfFrame = document.querySelector("#pdf-frame");
-const productVisualFrame = document.querySelector("#product-visual-frame");
+const productVisualImage = document.querySelector("#product-visual-image");
 const productVisualEmpty = document.querySelector("#product-visual-empty");
 const productVisualNote = document.querySelector("#product-visual-note");
 const productVisualSource = document.querySelector("#product-visual-source");
 const productVisualStatus = document.querySelector("#product-visual-status");
+const productVisualCount = document.querySelector("#product-visual-count");
 const markdownOutput = document.querySelector("#markdown-output");
 const sourceFile = document.querySelector("#source-file");
 const pagesProcessed = document.querySelector("#pages-processed");
@@ -123,12 +124,13 @@ function showPreview(file) {
   previewUrl = URL.createObjectURL(file);
   pdfFrame.src = previewUrl;
   pdfPreview.hidden = false;
-  productVisualFrame.src = `${previewUrl}#page=1&view=FitH`;
-  productVisualFrame.hidden = false;
-  productVisualEmpty.hidden = true;
-  productVisualNote.textContent = "Showing the first page of the uploaded document as the product visual source.";
+  productVisualImage.hidden = true;
+  productVisualImage.removeAttribute("src");
+  productVisualEmpty.hidden = false;
+  productVisualNote.textContent = "PDF selected. Parse it to extract an embedded product image.";
   productVisualSource.textContent = file.name;
-  productVisualStatus.textContent = "Document preview loaded";
+  productVisualStatus.textContent = "Waiting for parser";
+  productVisualCount.textContent = "0";
   fileStatus.textContent = `${file.name} · ${formatBytes(file.size)}`;
 }
 
@@ -210,17 +212,32 @@ function resetAnalysisPanels() {
   profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
   retrievalResults.textContent = "Public customs ruling search will run after parsing.";
   hsCodeResults.textContent = "Parse a PDF to generate a suggested HS code.";
-  productVisualNote.textContent = "The selected PDF is loaded as the visual source for product review.";
-  productVisualStatus.textContent = "Ready for parsing";
+  productVisualNote.textContent = "PDF selected. Parse it to extract an embedded product image.";
+  productVisualStatus.textContent = "Waiting for parser";
+  productVisualCount.textContent = "0";
 }
 
 function renderProductVisual(data) {
-  const productName = data?.productRecord?.product_name || "Product";
-  const pages = data?.pagesProcessed ? `${data.pagesProcessed} page${data.pagesProcessed === 1 ? "" : "s"}` : "page count not available";
+  const visual = data?.productVisual || {};
+  const productName = data?.productRecord?.product_name || "product";
 
-  productVisualNote.textContent = `${productName} visual review is tied to the uploaded PDF, with ${pages} processed by the parser.`;
-  productVisualSource.textContent = data?.originalName || "Uploaded PDF";
-  productVisualStatus.textContent = "Document sourced preview";
+  productVisualSource.textContent = visual.source || "LlamaParse embedded image extraction";
+  productVisualStatus.textContent = visual.status || "No embedded image returned by parser.";
+  productVisualCount.textContent = String(visual.imageCount || 0);
+
+  if (visual.available && visual.url) {
+    productVisualImage.src = visual.url;
+    productVisualImage.alt = `${productName} image extracted from uploaded PDF`;
+    productVisualImage.hidden = false;
+    productVisualEmpty.hidden = true;
+    productVisualNote.textContent = "Showing the embedded product image extracted from the uploaded PDF.";
+    return;
+  }
+
+  productVisualImage.hidden = true;
+  productVisualImage.removeAttribute("src");
+  productVisualEmpty.hidden = false;
+  productVisualNote.textContent = "No embedded product photo was returned from this PDF. The original PDF preview remains available on the left.";
 }
 
 function escapeHtml(value = "") {

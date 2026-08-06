@@ -149,6 +149,39 @@ function getMarkdownPages(result) {
   }));
 }
 
+function getProductVisual(result) {
+  const images = Array.isArray(result?.images_content_metadata?.images)
+    ? result.images_content_metadata.images
+    : [];
+  const embeddedImage = images.find((image) => image?.category === "embedded" && image.presigned_url);
+  const fallbackImage = images.find((image) => image?.presigned_url);
+  const selectedImage = embeddedImage || fallbackImage || null;
+
+  if (!selectedImage) {
+    return {
+      available: false,
+      status: images.length > 0 ? "Images returned without a usable URL." : "No embedded image returned by parser.",
+      imageCount: images.length,
+      source: "LlamaParse embedded image extraction",
+      url: null,
+      filename: null,
+      contentType: null,
+      category: null,
+    };
+  }
+
+  return {
+    available: true,
+    status: selectedImage.category === "embedded" ? "Embedded PDF image extracted" : "Parser image asset extracted",
+    imageCount: images.length,
+    source: "LlamaParse embedded image extraction",
+    url: selectedImage.presigned_url,
+    filename: selectedImage.filename || "Extracted image",
+    contentType: selectedImage.content_type || null,
+    category: selectedImage.category || null,
+  };
+}
+
 const productFields = [
   ["document_type", "Document type"],
   ["product_name", "Product name"],
@@ -655,7 +688,8 @@ async function parsePdfWithLlamaParse(filePath, options = {}) {
         upload_file: fs.createReadStream(filePath),
         tier: "cost_effective",
         version: "latest",
-        expand: ["markdown"],
+        output_options: { images_to_save: ["embedded"] },
+        expand: ["markdown", "images_content_metadata"],
       },
       {
         pollingInterval: 2,
@@ -667,6 +701,7 @@ async function parsePdfWithLlamaParse(filePath, options = {}) {
   );
 
   const pages = getMarkdownPages(result);
+  const productVisual = getProductVisual(result);
   const productRecord = extractProductRecord(pages);
   const retrievalProfile = buildRetrievalProfile(productRecord);
   let customsRetrieval;
@@ -697,6 +732,7 @@ async function parsePdfWithLlamaParse(filePath, options = {}) {
     markdown: pages.map((page) => `<!-- Page ${page.pageNumber} -->\n${page.markdown}`).join("\n\n"),
     pages,
     completed: result?.job?.status === "COMPLETED",
+    productVisual,
     productRecord,
     retrievalProfile,
     customsRetrieval,
