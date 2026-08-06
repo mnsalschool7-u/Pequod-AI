@@ -187,31 +187,22 @@ async function parsePdfWithLlamaParse(filePath) {
 
   const { default: LlamaCloudDefault, LlamaCloud } = await import("@llamaindex/llama-cloud");
   const LlamaCloudClient = LlamaCloudDefault || LlamaCloud;
-  const client = new LlamaCloudClient();
-
-  const uploadedFile = await withTimeout(
-    client.files.create({
-      file: fs.createReadStream(filePath),
-      purpose: "parse",
-    }),
-    30000,
-    "The document upload to LlamaParse timed out."
-  );
+  const client = new LlamaCloudClient({ timeout: 120000 });
 
   const result = await withTimeout(
     client.parsing.parse(
       {
-        file_id: uploadedFile.id,
-        tier: "agentic",
+        upload_file: fs.createReadStream(filePath),
+        tier: "cost_effective",
         version: "latest",
         expand: ["markdown"],
       },
       {
-        pollingInterval: 2000,
-        timeout: 90000,
+        pollingInterval: 2,
+        timeout: 180,
       }
     ),
-    105000,
+    180000,
     "LlamaParse timed out before the document finished processing."
   );
 
@@ -219,7 +210,7 @@ async function parsePdfWithLlamaParse(filePath) {
 
   return {
     submitted: true,
-    fileId: uploadedFile.id,
+    fileId: result?.file_id || null,
     jobId: result?.job?.id || null,
     status: result?.job?.status || "UNKNOWN",
     outputFormat: pages.length > 0 ? "markdown" : "unknown",
