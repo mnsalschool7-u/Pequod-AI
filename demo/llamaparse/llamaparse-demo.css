@@ -520,6 +520,103 @@
   font-size: 0.82rem;
 }
 
+.product-visual-card {
+  background:
+    linear-gradient(135deg, rgba(78, 135, 174, 0.12), transparent 42%),
+    rgba(6, 18, 30, 0.035);
+  border: 1px solid rgba(12, 32, 48, 0.1);
+  border-radius: 22px;
+  display: grid;
+  gap: 1rem;
+  margin: 1.2rem;
+  padding: 1rem;
+}
+
+.product-visual-card h3 {
+  color: var(--ink);
+  font-size: 1rem;
+  margin: 0.25rem 0 0;
+}
+
+.product-visual-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0.45rem 0 0;
+}
+
+.product-visual-preview {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(120, 184, 220, 0.2), transparent 34%),
+    #06121e;
+  border: 1px solid rgba(120, 184, 220, 0.16);
+  border-radius: 18px;
+  min-height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.product-visual-preview iframe {
+  border: 0;
+  height: 260px;
+  width: 100%;
+}
+
+.product-visual-empty {
+  align-items: center;
+  color: #d9e9f1;
+  display: grid;
+  gap: 0.5rem;
+  min-height: 220px;
+  padding: 1.2rem;
+  place-items: center;
+  text-align: center;
+}
+
+.product-visual-empty span {
+  color: #f7c873;
+  font-size: 2rem;
+}
+
+.product-visual-empty strong {
+  color: #ffffff;
+}
+
+.product-visual-empty small {
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 260px;
+}
+
+.product-visual-facts {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.product-visual-facts div {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(12, 32, 48, 0.08);
+  border-radius: 14px;
+  padding: 0.8rem;
+}
+
+.product-visual-facts dt {
+  color: var(--muted);
+  font-family: "DM Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-visual-facts dd {
+  color: var(--ink);
+  font-weight: 800;
+  margin: 0.35rem 0 0;
+  overflow-wrap: anywhere;
+}
+
 .markdown-panel {
   margin: 1.25rem auto 4rem;
   max-width: var(--container);
@@ -913,6 +1010,10 @@
   }
 
   .result-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .product-visual-facts {
     grid-template-columns: 1fr;
   }
 

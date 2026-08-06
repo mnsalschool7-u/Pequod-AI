@@ -8,6 +8,11 @@ const useCustomsIndex = document.querySelector("#use-customs-index");
 const indexStatusMessage = document.querySelector("#index-status-message");
 const pdfPreview = document.querySelector("#pdf-preview");
 const pdfFrame = document.querySelector("#pdf-frame");
+const productVisualFrame = document.querySelector("#product-visual-frame");
+const productVisualEmpty = document.querySelector("#product-visual-empty");
+const productVisualNote = document.querySelector("#product-visual-note");
+const productVisualSource = document.querySelector("#product-visual-source");
+const productVisualStatus = document.querySelector("#product-visual-status");
 const markdownOutput = document.querySelector("#markdown-output");
 const sourceFile = document.querySelector("#source-file");
 const pagesProcessed = document.querySelector("#pages-processed");
@@ -118,6 +123,12 @@ function showPreview(file) {
   previewUrl = URL.createObjectURL(file);
   pdfFrame.src = previewUrl;
   pdfPreview.hidden = false;
+  productVisualFrame.src = `${previewUrl}#page=1&view=FitH`;
+  productVisualFrame.hidden = false;
+  productVisualEmpty.hidden = true;
+  productVisualNote.textContent = "Showing the first page of the uploaded document as the product visual source.";
+  productVisualSource.textContent = file.name;
+  productVisualStatus.textContent = "Document preview loaded";
   fileStatus.textContent = `${file.name} · ${formatBytes(file.size)}`;
 }
 
@@ -187,6 +198,7 @@ function updateFromResponse(data) {
   renderRetrievalProfile(data.retrievalProfile);
   renderRetrievalResults(data.customsRetrieval);
   renderHsCodes(data.customsRetrieval);
+  renderProductVisual(data);
 }
 
 function resetAnalysisPanels() {
@@ -198,6 +210,17 @@ function resetAnalysisPanels() {
   profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
   retrievalResults.textContent = "Public customs ruling search will run after parsing.";
   hsCodeResults.textContent = "Parse a PDF to generate a suggested HS code.";
+  productVisualNote.textContent = "The selected PDF is loaded as the visual source for product review.";
+  productVisualStatus.textContent = "Ready for parsing";
+}
+
+function renderProductVisual(data) {
+  const productName = data?.productRecord?.product_name || "Product";
+  const pages = data?.pagesProcessed ? `${data.pagesProcessed} page${data.pagesProcessed === 1 ? "" : "s"}` : "page count not available";
+
+  productVisualNote.textContent = `${productName} visual review is tied to the uploaded PDF, with ${pages} processed by the parser.`;
+  productVisualSource.textContent = data?.originalName || "Uploaded PDF";
+  productVisualStatus.textContent = "Document sourced preview";
 }
 
 function escapeHtml(value = "") {

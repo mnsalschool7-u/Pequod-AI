@@ -145,6 +145,34 @@
             </div>
           </dl>
 
+          <section class="product-visual-card" aria-labelledby="product-visual-heading">
+            <div>
+              <span class="micro-label">Product visual</span>
+              <h3 id="product-visual-heading">Product photo source</h3>
+              <p id="product-visual-note">
+                Select a PDF to preview the document visual used for product review.
+              </p>
+            </div>
+            <div class="product-visual-preview">
+              <iframe id="product-visual-frame" title="Product visual from uploaded PDF" hidden></iframe>
+              <div class="product-visual-empty" id="product-visual-empty" aria-live="polite">
+                <span aria-hidden="true">◒</span>
+                <strong>No product visual loaded</strong>
+                <small>The demo will show a document sourced preview when a PDF is selected.</small>
+              </div>
+            </div>
+            <dl class="product-visual-facts">
+              <div>
+                <dt>Visual source</dt>
+                <dd id="product-visual-source">Not available</dd>
+              </div>
+              <div>
+                <dt>Image status</dt>
+                <dd id="product-visual-status">Waiting</dd>
+              </div>
+            </dl>
+          </section>
+
           <details class="developer-box" open>
             <summary>Developer verification</summary>
             <ul>

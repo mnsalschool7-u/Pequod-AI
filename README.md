@@ -62,6 +62,7 @@ It supports the Pequod document workflow:
 6. Extract document supported product facts into a structured record.
 7. Generate a customs retrieval profile from the extracted facts.
 8. Retrieve matching customs ruling documents from public CBP CROSS search, or from LlamaCloud Index when `LLAMA_CLOUD_INDEX_ID` is configured.
+9. Show a document sourced visual preview for product review without fabricating a standalone product photo.
 
 The live LlamaParse parse call occurs in `server.js` inside `parsePdfWithLlamaParse()`. Customs retrieval occurs in `retrieveCustomsPrecedents()`. Without `LLAMA_CLOUD_INDEX_ID`, that function queries public CBP CROSS search. With `LLAMA_CLOUD_INDEX_ID`, it uses LlamaCloud Index.
 
