@@ -381,12 +381,13 @@ function buildRetrievalProfile(record) {
 
 async function retrieveCustomsPrecedents(client, profile, useCustomsIndex = true) {
   const indexId = process.env.LLAMA_CLOUD_INDEX_ID || "";
+  const maskedIndexId = indexId ? `${indexId.slice(0, 7)}...${indexId.slice(-4)}` : null;
 
   if (!useCustomsIndex) {
     return {
       connected: Boolean(indexId),
       enabledForRun: false,
-      indexId: indexId || null,
+      indexId: maskedIndexId,
       query: profile.query,
       results: [],
       message: "Customs ruling index search was not enabled for this run.",
@@ -413,7 +414,7 @@ async function retrieveCustomsPrecedents(client, profile, useCustomsIndex = true
   return {
     connected: true,
     enabledForRun: true,
-    indexId,
+    indexId: maskedIndexId,
     query: profile.query,
     results: (response?.results || []).map((result) => ({
       content: cleanText(result.content || "").slice(0, 900),
@@ -505,7 +506,9 @@ async function parsePdfWithLlamaParse(filePath, options = {}) {
     customsRetrieval = {
       connected: Boolean(process.env.LLAMA_CLOUD_INDEX_ID),
       enabledForRun: Boolean(options.useCustomsIndex),
-      indexId: process.env.LLAMA_CLOUD_INDEX_ID || null,
+      indexId: process.env.LLAMA_CLOUD_INDEX_ID
+        ? `${process.env.LLAMA_CLOUD_INDEX_ID.slice(0, 7)}...${process.env.LLAMA_CLOUD_INDEX_ID.slice(-4)}`
+        : null,
       query: retrievalProfile.query,
       results: [],
       message: "Customs retrieval could not be completed. Document parsing still succeeded.",
