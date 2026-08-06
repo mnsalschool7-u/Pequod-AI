@@ -80,6 +80,7 @@ Confirm:
 * Public CBP CROSS search is available without `LLAMA_CLOUD_INDEX_ID`.
 * If `LLAMA_CLOUD_INDEX_ID` is configured, retrieval returns real LlamaCloud Index results.
 * If `LLAMA_CLOUD_INDEX_ID` is not configured, retrieval returns real public CBP CROSS results when matches are available.
+* HS codes are displayed only when they are cited in retrieved rulings.
 * Missing API keys, invalid files, failed jobs, and timeouts show user facing errors.
 * Browser console and server logs do not expose the API key or full document contents.
 
@@ -88,7 +89,7 @@ Confirm:
 * Structured extraction is conservative and rule based for this demo.
 * Public CBP CROSS search depends on CBP availability and the search terms generated from the parsed product record.
 * LlamaCloud Index retrieval still requires a real LlamaCloud Index containing approved customs ruling documents.
-* The demo does not invent rulings, HS codes, or classification conclusions. Public CBP scores are transparent Pequod match confidence scores based on search rank and keyword overlap.
+* The demo does not invent rulings, HS codes, or classification conclusions. HS codes shown are precedent codes found in retrieved rulings, not final classifications. Public CBP scores are transparent Pequod match confidence scores based on search rank and keyword overlap.
 * Uploads are limited to PDFs up to 15 MB.
 * Temporary uploads are deleted after parsing completes or fails.
 

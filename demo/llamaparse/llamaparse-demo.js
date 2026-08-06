@@ -23,6 +23,7 @@ const attentionList = document.querySelector("#attention-list");
 const retrievalStatus = document.querySelector("#retrieval-status");
 const profileList = document.querySelector("#profile-list");
 const retrievalResults = document.querySelector("#retrieval-results");
+const hsCodeResults = document.querySelector("#hs-code-results");
 const steps = Array.from(document.querySelectorAll("#processing-steps li"));
 const demoApiBaseUrl = "https://pequod-ai-parser-api.onrender.com";
 
@@ -185,6 +186,7 @@ function updateFromResponse(data) {
   renderAttention(data.productRecord);
   renderRetrievalProfile(data.retrievalProfile);
   renderRetrievalResults(data.customsRetrieval);
+  renderHsCodes(data.customsRetrieval);
 }
 
 function resetAnalysisPanels() {
@@ -195,6 +197,7 @@ function resetAnalysisPanels() {
   retrievalStatus.className = "status-chip idle";
   profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
   retrievalResults.textContent = "Public customs ruling search will run after parsing.";
+  hsCodeResults.textContent = "Parse a PDF to see HS codes cited in retrieved customs rulings.";
 }
 
 function escapeHtml(value = "") {
@@ -309,6 +312,70 @@ function renderRetrievalResults(retrieval) {
         </small>
         <small>${escapeHtml(result.scoreBasis || "")}</small>
         ${result.url ? `<a href="${escapeHtml(result.url)}" target="_blank" rel="noreferrer">Open CBP ruling</a>` : ""}
+      </article>
+    `)
+    .join("");
+}
+
+function collectHsCodes(retrieval) {
+  const results = Array.isArray(retrieval?.results) ? retrieval.results : [];
+  const codes = new Map();
+
+  results.forEach((result) => {
+    const tariffs = Array.isArray(result.tariffs) ? result.tariffs : [];
+
+    tariffs.forEach((code) => {
+      const normalizedCode = `${code}`.trim();
+
+      if (!normalizedCode) {
+        return;
+      }
+
+      if (!codes.has(normalizedCode)) {
+        codes.set(normalizedCode, {
+          code: normalizedCode,
+          sources: [],
+        });
+      }
+
+      codes.get(normalizedCode).sources.push({
+        rulingNumber: result.rulingNumber || "Not available",
+        title: result.title || "Retrieved customs ruling",
+        score: result.score ?? "Not available",
+        url: result.url || "",
+      });
+    });
+  });
+
+  return Array.from(codes.values());
+}
+
+function renderHsCodes(retrieval) {
+  const codes = collectHsCodes(retrieval);
+
+  if (!retrieval?.connected) {
+    hsCodeResults.textContent = "Customs ruling search is unavailable right now.";
+    return;
+  }
+
+  if (codes.length === 0) {
+    hsCodeResults.textContent = "No HS codes were cited in the retrieved rulings.";
+    return;
+  }
+
+  hsCodeResults.innerHTML = codes
+    .map((item) => `
+      <article class="hs-code-card">
+        <strong>${escapeHtml(item.code)}</strong>
+        <span>Found in ${escapeHtml(item.sources.length)} retrieved ${item.sources.length === 1 ? "ruling" : "rulings"}</span>
+        <ul>
+          ${item.sources.map((source) => `
+            <li>
+              ${source.url ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.rulingNumber)}</a>` : escapeHtml(source.rulingNumber)}
+              <small>${escapeHtml(source.title)} | Confidence: ${escapeHtml(source.score)}</small>
+            </li>
+          `).join("")}
+        </ul>
       </article>
     `)
     .join("");
