@@ -89,6 +89,14 @@
               <strong>Select or drop a PDF</strong>
               <small>PDF only, up to 15 MB. The API key never leaves the server.</small>
             </label>
+            <fieldset class="index-option">
+              <legend>Customs ruling index</legend>
+              <label>
+                <input id="use-customs-index" name="useCustomsIndex" type="checkbox" disabled />
+                <span>Search connected customs ruling index after parsing</span>
+              </label>
+              <small id="index-status-message">Checking customs index connection...</small>
+            </fieldset>
             <p class="form-error" id="form-error" role="alert"></p>
             <button class="button button-primary" type="submit">Parse document</button>
           </form>

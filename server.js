@@ -379,12 +379,24 @@ function buildRetrievalProfile(record) {
   };
 }
 
-async function retrieveCustomsPrecedents(client, profile) {
+async function retrieveCustomsPrecedents(client, profile, useCustomsIndex = true) {
   const indexId = process.env.LLAMA_CLOUD_INDEX_ID || "";
+
+  if (!useCustomsIndex) {
+    return {
+      connected: Boolean(indexId),
+      enabledForRun: false,
+      indexId: indexId || null,
+      query: profile.query,
+      results: [],
+      message: "Customs ruling index search was not enabled for this run.",
+    };
+  }
 
   if (!indexId) {
     return {
       connected: false,
+      enabledForRun: false,
       indexId: null,
       query: profile.query,
       results: [],
@@ -400,6 +412,7 @@ async function retrieveCustomsPrecedents(client, profile) {
 
   return {
     connected: true,
+    enabledForRun: true,
     indexId,
     query: profile.query,
     results: (response?.results || []).map((result) => ({
@@ -410,6 +423,16 @@ async function retrieveCustomsPrecedents(client, profile) {
       staticFields: result.static_fields || null,
     })),
     message: "Customs ruling index retrieval completed.",
+  };
+}
+
+function getCustomsIndexStatus() {
+  const indexId = process.env.LLAMA_CLOUD_INDEX_ID || "";
+
+  return {
+    connected: Boolean(indexId),
+    maskedIndexId: indexId ? `${indexId.slice(0, 7)}...${indexId.slice(-4)}` : null,
+    source: "LLAMA_CLOUD_INDEX_ID",
   };
 }
 
@@ -442,7 +465,7 @@ function withTimeout(promise, timeoutMs, message) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
 }
 
-async function parsePdfWithLlamaParse(filePath) {
+async function parsePdfWithLlamaParse(filePath, options = {}) {
   if (!process.env.LLAMA_CLOUD_API_KEY) {
     const error = new Error("LLAMA_CLOUD_API_KEY is not configured on the server.");
     error.statusCode = 503;
@@ -476,11 +499,12 @@ async function parsePdfWithLlamaParse(filePath) {
   let customsRetrieval;
 
   try {
-    customsRetrieval = await retrieveCustomsPrecedents(client, retrievalProfile);
+    customsRetrieval = await retrieveCustomsPrecedents(client, retrievalProfile, options.useCustomsIndex);
   } catch (error) {
     console.error("Customs retrieval skipped:", getSafeLlamaError(error));
     customsRetrieval = {
       connected: Boolean(process.env.LLAMA_CLOUD_INDEX_ID),
+      enabledForRun: Boolean(options.useCustomsIndex),
       indexId: process.env.LLAMA_CLOUD_INDEX_ID || null,
       query: retrievalProfile.query,
       results: [],
@@ -1055,17 +1079,24 @@ app.post("/api/event-food", upload.single("eventScreenshot"), async (req, res) =
 });
 
 // LlamaParse demo: accepts a PDF, sends it to the real LlamaCloud service, and returns parsed markdown.
+app.get("/api/demo/llamaparse/index-status", (_req, res) => {
+  return res.json(getCustomsIndexStatus());
+});
+
 app.post("/api/demo/llamaparse", llamaParseUpload.single("document"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "Please upload a PDF document." });
   }
 
   try {
-    const parseResult = await parsePdfWithLlamaParse(req.file.path);
+    const parseResult = await parsePdfWithLlamaParse(req.file.path, {
+      useCustomsIndex: req.body?.useCustomsIndex === "true",
+    });
 
     return res.json({
       originalName: req.file.originalname,
       size: req.file.size,
+      customsIndex: getCustomsIndexStatus(),
       ...parseResult,
     });
   } catch (error) {

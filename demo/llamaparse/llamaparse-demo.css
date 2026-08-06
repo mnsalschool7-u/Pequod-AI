@@ -319,6 +319,49 @@
   max-width: 340px;
 }
 
+.index-option {
+  background: rgba(6, 18, 30, 0.035);
+  border: 1px solid rgba(12, 32, 48, 0.1);
+  border-radius: 18px;
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0.95rem 1rem;
+}
+
+.index-option legend {
+  color: var(--muted);
+  font-family: "DM Mono", monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.09em;
+  padding: 0 0.35rem;
+  text-transform: uppercase;
+}
+
+.index-option label {
+  align-items: center;
+  color: var(--ink);
+  display: flex;
+  font-weight: 800;
+  gap: 0.65rem;
+  line-height: 1.4;
+}
+
+.index-option input {
+  accent-color: var(--blue);
+  height: 1rem;
+  width: 1rem;
+}
+
+.index-option input:disabled + span {
+  color: #7b8a94;
+}
+
+.index-option small {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .form-error {
   color: #9d2a1d;
   font-size: 0.9rem;

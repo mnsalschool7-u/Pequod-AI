@@ -4,6 +4,8 @@ const dropZone = document.querySelector("#drop-zone");
 const formError = document.querySelector("#form-error");
 const fileStatus = document.querySelector("#file-status");
 const parseStatus = document.querySelector("#parse-status");
+const useCustomsIndex = document.querySelector("#use-customs-index");
+const indexStatusMessage = document.querySelector("#index-status-message");
 const pdfPreview = document.querySelector("#pdf-preview");
 const pdfFrame = document.querySelector("#pdf-frame");
 const markdownOutput = document.querySelector("#markdown-output");
@@ -30,6 +32,28 @@ const legacyParserHash = ["#parser", "output"].join(String.fromCharCode(45));
 
 if (window.location.hash === legacyParserHash) {
   history.replaceState(null, "", "#parseroutput");
+}
+
+async function loadIndexStatus() {
+  try {
+    const response = await fetch(`${demoApiBaseUrl}/api/demo/llamaparse/index-status`);
+    const status = await response.json();
+
+    if (status.connected) {
+      useCustomsIndex.disabled = false;
+      useCustomsIndex.checked = true;
+      indexStatusMessage.textContent = `Connected server side index ${status.maskedIndexId}.`;
+      return;
+    }
+
+    useCustomsIndex.disabled = true;
+    useCustomsIndex.checked = false;
+    indexStatusMessage.textContent = "No server side customs ruling index is connected yet.";
+  } catch (_error) {
+    useCustomsIndex.disabled = true;
+    useCustomsIndex.checked = false;
+    indexStatusMessage.textContent = "Customs index status is unavailable right now.";
+  }
 }
 
 function setError(message = "") {
@@ -294,6 +318,7 @@ form.addEventListener("submit", async (event) => {
 
   const body = new FormData();
   body.append("document", file);
+  body.append("useCustomsIndex", String(useCustomsIndex.checked && !useCustomsIndex.disabled));
 
   const submitButton = form.querySelector("button[type='submit']");
   submitButton.disabled = true;
@@ -344,3 +369,5 @@ window.addEventListener("beforeunload", () => {
     URL.revokeObjectURL(previewUrl);
   }
 });
+
+loadIndexStatus();

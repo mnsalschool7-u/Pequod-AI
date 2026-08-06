@@ -27,6 +27,8 @@ PORT=3000
 
 `LLAMA_CLOUD_INDEX_ID` is optional. When it is not set, the demo still parses the uploaded PDF, extracts a structured product record, and generates the customs retrieval query, but it does not show ruling matches.
 
+The demo checks `/api/demo/llamaparse/index-status` to determine whether the server side index option should be enabled. The browser never receives the LlamaCloud API key. The index ID is only shown in masked form.
+
 Optional existing variables are documented in `.env.example`.
 
 ## Run locally
@@ -75,6 +77,7 @@ Confirm:
 * The markdown output changes based on the uploaded document.
 * The structured product table uses only facts supported by the uploaded document.
 * The customs retrieval profile changes based on the extracted product facts.
+* The customs ruling index option is enabled only when `LLAMA_CLOUD_INDEX_ID` exists on the server.
 * If `LLAMA_CLOUD_INDEX_ID` is configured, retrieval returns real index results.
 * If `LLAMA_CLOUD_INDEX_ID` is not configured, the page states that no customs ruling index has been connected yet.
 * Missing API keys, invalid files, failed jobs, and timeouts show user facing errors.
