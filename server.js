@@ -169,6 +169,10 @@ const productFields = [
 ];
 
 function cleanText(value = "") {
+  if (value == null) {
+    return "";
+  }
+
   return `${value}`.replace(/\s+/g, " ").trim();
 }
 
