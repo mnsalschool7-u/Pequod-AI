@@ -112,9 +112,9 @@
             <li data-step="uploading">Uploading document</li>
             <li data-step="submitting">Submitting document to parser</li>
             <li data-step="parsing">Parsing document structure</li>
-            <li class="is-future" data-step="extracting">Extracting product attributes <span>Phase 2</span></li>
-            <li class="is-future" data-step="validating">Validating extracted fields <span>Phase 2</span></li>
-            <li class="is-future" data-step="profile">Generating customs retrieval profile <span>Phase 3</span></li>
+            <li data-step="extracting">Extracting product attributes</li>
+            <li data-step="validating">Validating extracted fields</li>
+            <li data-step="profile">Generating customs retrieval profile</li>
             <li data-step="complete">Complete</li>
           </ol>
 
@@ -148,6 +148,76 @@
             </ul>
           </details>
         </article>
+      </section>
+
+      <!-- Structured product facts and retrieval profile derived from the parsed document. -->
+      <section class="analysis-grid" aria-label="Structured customs analysis">
+        <article class="panel product-record-panel">
+          <div class="panel-head">
+            <div>
+              <span class="micro-label">Structured product record</span>
+              <h2>Extracted classification facts</h2>
+            </div>
+            <span class="status-chip" id="structured-count">Waiting</span>
+          </div>
+          <div class="table-wrap">
+            <table class="record-table">
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  <th>Extracted value</th>
+                  <th>Source page</th>
+                  <th>Supporting text</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="record-table-body">
+                <tr>
+                  <td colspan="5">Upload a PDF to extract document supported product facts.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel attention-panel">
+          <div class="panel-head">
+            <div>
+              <span class="micro-label">Attention required</span>
+              <h2>Missing information</h2>
+            </div>
+          </div>
+          <ul class="attention-list" id="attention-list">
+            <li>Upload a PDF to identify missing classification information.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="panel retrieval-panel" aria-labelledby="retrieval-heading">
+        <div class="panel-head">
+          <div>
+            <span class="micro-label">Customs precedent retrieval</span>
+            <h2 id="retrieval-heading">Generated ruling search profile</h2>
+          </div>
+          <span class="status-chip idle" id="retrieval-status">Not connected</span>
+        </div>
+        <div class="retrieval-layout">
+          <div>
+            <h3>Search profile</h3>
+            <dl class="profile-list" id="profile-list">
+              <div>
+                <dt>Product class</dt>
+                <dd>Waiting for document ingestion.</dd>
+              </div>
+            </dl>
+          </div>
+          <div>
+            <h3>Retrieval results</h3>
+            <div class="retrieval-results" id="retrieval-results">
+              No customs ruling index has been connected yet.
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Raw markdown is intentionally preserved for debugging and later extraction. -->

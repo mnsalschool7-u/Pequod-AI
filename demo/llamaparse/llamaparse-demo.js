@@ -15,6 +15,12 @@ const devJobId = document.querySelector("#dev-job-id");
 const devStatus = document.querySelector("#dev-status");
 const devOutput = document.querySelector("#dev-output");
 const devComplete = document.querySelector("#dev-complete");
+const structuredCount = document.querySelector("#structured-count");
+const recordTableBody = document.querySelector("#record-table-body");
+const attentionList = document.querySelector("#attention-list");
+const retrievalStatus = document.querySelector("#retrieval-status");
+const profileList = document.querySelector("#profile-list");
+const retrievalResults = document.querySelector("#retrieval-results");
 const steps = Array.from(document.querySelectorAll("#processing-steps li"));
 const demoApiBaseUrl = "https://pequod-ai-parser-api.onrender.com";
 
@@ -105,6 +111,7 @@ function handleFileSelection(file) {
   clearSteps();
   setStatus("Ready", "idle");
   markdownOutput.textContent = "Ready to send this PDF to the live parser.";
+  resetAnalysisPanels();
 }
 
 fileInput.addEventListener("change", () => {
@@ -148,6 +155,130 @@ function updateFromResponse(data) {
   devOutput.textContent = data.outputFormat || "Not available";
   devComplete.textContent = data.completed ? "Yes" : "No";
   markdownOutput.textContent = data.markdown || "The parser returned no markdown output.";
+  renderProductRecord(data.productRecord);
+  renderAttention(data.productRecord);
+  renderRetrievalProfile(data.retrievalProfile);
+  renderRetrievalResults(data.customsRetrieval);
+}
+
+function resetAnalysisPanels() {
+  structuredCount.textContent = "Ready";
+  recordTableBody.innerHTML = `<tr><td colspan="5">Parse the selected PDF to extract document supported product facts.</td></tr>`;
+  attentionList.innerHTML = "<li>Parse the selected PDF to identify missing classification information.</li>";
+  retrievalStatus.textContent = "Not connected";
+  retrievalStatus.className = "status-chip idle";
+  profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
+  retrievalResults.textContent = "No customs ruling index has been connected yet.";
+}
+
+function escapeHtml(value = "") {
+  return `${value}`
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatValue(value) {
+  if (Array.isArray(value)) {
+    return value.length > 0 ? value.join(", ") : "Not stated";
+  }
+
+  return value || "Not stated";
+}
+
+function renderProductRecord(record) {
+  const fields = Array.isArray(record?.fields) ? record.fields : [];
+  const extractedCount = fields.filter((field) => field.status === "Extracted").length;
+
+  structuredCount.textContent = fields.length > 0 ? `${extractedCount} fields` : "No fields";
+
+  if (fields.length === 0) {
+    recordTableBody.innerHTML = `<tr><td colspan="5">No structured fields were returned.</td></tr>`;
+    return;
+  }
+
+  recordTableBody.innerHTML = fields
+    .map((field) => `
+      <tr>
+        <td>${escapeHtml(field.label)}</td>
+        <td>${escapeHtml(formatValue(field.value))}</td>
+        <td>${escapeHtml(field.sourcePage || "Not available")}</td>
+        <td>${escapeHtml(field.supportingText || "Not stated in document")}</td>
+        <td><span class="table-status ${escapeHtml(field.status.toLowerCase())}">${escapeHtml(field.status)}</span></td>
+      </tr>
+    `)
+    .join("");
+}
+
+function renderAttention(record) {
+  const missing = new Set(record?.missing_information || []);
+  const flags = [
+    ["Intended use", "Missing intended use"],
+    ["Country of origin", "Missing country of origin"],
+    ["Primary material", "Missing material composition"],
+    ["Components", "Missing component breakdown"],
+    ["Voltage", "Missing electrical specifications"],
+    ["Wattage", "Missing electrical specifications"],
+    ["Dimensions", "Missing dimensions"],
+    ["Weight", "Missing component values"],
+  ];
+  const applicable = Array.from(new Set(flags.filter(([field]) => missing.has(field)).map(([, label]) => label)));
+
+  attentionList.innerHTML = applicable.length > 0
+    ? applicable.map((flag) => `<li>${escapeHtml(flag)}</li>`).join("")
+    : "<li>No missing classification fields were detected from the configured checklist.</li>";
+}
+
+function renderRetrievalProfile(profile) {
+  if (!profile) {
+    profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
+    return;
+  }
+
+  const rows = [
+    ["Product class", profile.productClass],
+    ["Principal function", profile.principalFunction],
+    ["Primary material", profile.primaryMaterial],
+    ["Secondary materials", profile.secondaryMaterials],
+    ["Electrical components", profile.electricalComponents],
+    ["Intended use", profile.intendedUse],
+    ["Country of origin", profile.countryOfOrigin],
+    ["Classification keywords", profile.classificationKeywords],
+    ["Retrieval query", profile.query],
+  ];
+
+  profileList.innerHTML = rows
+    .map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(formatValue(value))}</dd></div>`)
+    .join("");
+}
+
+function renderRetrievalResults(retrieval) {
+  if (!retrieval?.connected) {
+    retrievalStatus.textContent = "Not connected";
+    retrievalStatus.className = "status-chip idle";
+    retrievalResults.textContent = retrieval?.message || "No customs ruling index has been connected yet.";
+    return;
+  }
+
+  retrievalStatus.textContent = "Connected";
+  retrievalStatus.className = "status-chip success";
+
+  if (!Array.isArray(retrieval.results) || retrieval.results.length === 0) {
+    retrievalResults.textContent = "The customs ruling index returned no matching documents.";
+    return;
+  }
+
+  retrievalResults.innerHTML = retrieval.results
+    .map((result, index) => `
+      <article class="retrieval-card">
+        <span>Result ${index + 1}</span>
+        <p>${escapeHtml(result.content)}</p>
+        <small>Score: ${escapeHtml(result.score ?? "Not available")} | Rerank: ${escapeHtml(result.rerankScore ?? "Not available")}</small>
+      </article>
+    `)
+    .join("");
 }
 
 form.addEventListener("submit", async (event) => {
@@ -189,6 +320,12 @@ form.addEventListener("submit", async (event) => {
       throw new Error(data.error || "The document could not be parsed.");
     }
 
+    setStep("extracting");
+    setStatus("Extracting", "idle");
+    setStep("validating");
+    setStatus("Validating", "idle");
+    setStep("profile");
+    setStatus("Retrieval profile", "idle");
     setStep("complete");
     setStatus("Complete", "success");
     updateFromResponse(data);

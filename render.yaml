@@ -25,3 +25,5 @@ services:
     envVars:
       - key: LLAMA_CLOUD_API_KEY
         sync: false
+      - key: LLAMA_CLOUD_INDEX_ID
+        sync: false

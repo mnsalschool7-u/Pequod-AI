@@ -149,6 +149,266 @@ function getMarkdownPages(result) {
   }));
 }
 
+const productFields = [
+  ["document_type", "Document type"],
+  ["product_name", "Product name"],
+  ["model_number", "Model number"],
+  ["product_description", "Product description"],
+  ["primary_material", "Primary material"],
+  ["secondary_materials", "Secondary materials"],
+  ["components", "Components"],
+  ["base_material", "Base material"],
+  ["light_source", "Light source"],
+  ["power_source", "Power source"],
+  ["voltage", "Voltage"],
+  ["wattage", "Wattage"],
+  ["dimensions", "Dimensions"],
+  ["weight", "Weight"],
+  ["intended_use", "Intended use"],
+  ["country_of_origin", "Country of origin"],
+];
+
+function cleanText(value = "") {
+  return `${value}`.replace(/\s+/g, " ").trim();
+}
+
+function uniqueValues(values = []) {
+  return Array.from(new Set(values.map(cleanText).filter(Boolean)));
+}
+
+function findPageEvidence(pages, patterns) {
+  for (const page of pages) {
+    const lines = `${page.markdown || ""}`
+      .split(/\r?\n/)
+      .map(cleanText)
+      .filter(Boolean);
+
+    for (const line of lines) {
+      if (patterns.some((pattern) => pattern.test(line))) {
+        return {
+          page: page.pageNumber,
+          excerpt: line.slice(0, 220),
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
+function findFirstMatch(text, patterns) {
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+
+    if (match?.[1]) {
+      return cleanText(match[1].replace(/[|:]/g, " "));
+    }
+  }
+
+  return null;
+}
+
+function makeField(key, value, evidence = null, status = "Extracted") {
+  const isArray = Array.isArray(value);
+  const hasValue = isArray ? value.length > 0 : Boolean(value);
+
+  return {
+    key,
+    label: productFields.find(([fieldKey]) => fieldKey === key)?.[1] || key,
+    value: hasValue ? value : isArray ? [] : null,
+    sourcePage: hasValue ? evidence?.page || null : null,
+    supportingText: hasValue ? evidence?.excerpt || "" : "",
+    status: hasValue ? status : "Missing",
+  };
+}
+
+function extractProductRecord(pages) {
+  const markdown = pages.map((page) => page.markdown || "").join("\n");
+  const text = cleanText(markdown);
+  const lower = text.toLowerCase();
+
+  const evidence = {
+    document_type: findPageEvidence(pages, [/product information/i, /specification/i, /product sheet/i, /manual/i]),
+    product_name: findPageEvidence(pages, [/product name/i, /item name/i, /salt lamp/i, /lamp/i]),
+    model_number: findPageEvidence(pages, [/model/i, /sku/i, /item no/i, /item number/i]),
+    product_description: findPageEvidence(pages, [/description/i, /product information/i, /lamp/i]),
+    primary_material: findPageEvidence(pages, [/material/i, /himalayan/i, /salt/i, /rock/i, /wood/i]),
+    components: findPageEvidence(pages, [/component/i, /cord/i, /socket/i, /switch/i, /bulb/i, /base/i]),
+    base_material: findPageEvidence(pages, [/wooden base/i, /wood base/i, /base material/i]),
+    light_source: findPageEvidence(pages, [/bulb/i, /light source/i, /lamp/i]),
+    power_source: findPageEvidence(pages, [/cord/i, /plug/i, /power source/i, /electric/i]),
+    voltage: findPageEvidence(pages, [/\b\d{2,3}\s?v\b/i, /voltage/i]),
+    wattage: findPageEvidence(pages, [/\b\d{1,4}\s?w\b/i, /wattage/i, /watts/i]),
+    dimensions: findPageEvidence(pages, [/dimension/i, /\b\d+(\.\d+)?\s?(in|inch|cm|mm)\b/i]),
+    weight: findPageEvidence(pages, [/weight/i, /\b\d+(\.\d+)?\s?(lb|lbs|kg|g)\b/i]),
+    intended_use: findPageEvidence(pages, [/intended use/i, /use/i, /decorative/i, /household/i, /ambient/i]),
+    country_of_origin: findPageEvidence(pages, [/country of origin/i, /made in/i, /origin/i]),
+  };
+
+  const productName =
+    findFirstMatch(text, [
+      /product name\s*[:|]\s*([^\n\r]+)/i,
+      /item name\s*[:|]\s*([^\n\r]+)/i,
+      /([A-Z][A-Za-z0-9 ]{2,80}\s+salt lamp)/i,
+    ]) || (lower.includes("salt lamp") ? "Salt lamp" : null);
+
+  const components = uniqueValues([
+    lower.includes("cord") ? "Electrical cord" : "",
+    lower.includes("socket") ? "Socket" : "",
+    lower.includes("switch") ? "Switch" : "",
+    lower.includes("bulb") ? "Replaceable bulb" : "",
+    lower.includes("base") ? "Base" : "",
+  ]);
+
+  const secondaryMaterials = uniqueValues([
+    lower.includes("wood") ? "Wood" : "",
+    lower.includes("metal") ? "Metal" : "",
+    lower.includes("plastic") ? "Plastic" : "",
+  ]);
+
+  const voltage = findFirstMatch(text, [/(\b\d{2,3}\s?v(?:olts?)?\b)/i, /voltage\s*[:|]\s*([^\n\r]+)/i]);
+  const wattage = findFirstMatch(text, [/(\b\d{1,4}\s?w(?:atts?)?\b)/i, /wattage\s*[:|]\s*([^\n\r]+)/i]);
+  const dimensions = findFirstMatch(text, [/dimensions?\s*[:|]\s*([^\n\r]+)/i]);
+  const weight = findFirstMatch(text, [/weight\s*[:|]\s*([^\n\r]+)/i]);
+  const country = findFirstMatch(text, [/country of origin\s*[:|]\s*([^\n\r]+)/i, /made in\s+([A-Za-z ]{2,60})/i]);
+  const model = findFirstMatch(text, [/(?:model|sku|item no\.?|item number)\s*[:|]\s*([A-Za-z0-9 ._/]+)/i]);
+  const intendedUse = findFirstMatch(text, [/intended use\s*[:|]\s*([^\n\r]+)/i]) ||
+    (/(decorative|ambient|household)/i.test(text) ? cleanText(text.match(/.{0,80}(decorative|ambient|household).{0,80}/i)?.[0] || "") : null);
+
+  const primaryMaterial = /himalayan|rock salt|salt/i.test(text) ? "Natural salt" : findFirstMatch(text, [/primary material\s*[:|]\s*([^\n\r]+)/i, /material\s*[:|]\s*([^\n\r]+)/i]);
+  const baseMaterial = /wooden base|wood base/i.test(text) ? "Wood" : null;
+  const lightSource = /replaceable bulb|bulb/i.test(text) ? "Replaceable bulb" : null;
+  const powerSource = /electric|cord|plug/i.test(text) ? "Electrical cord" : null;
+  const description = findFirstMatch(text, [/description\s*[:|]\s*([^\n\r]+)/i]) ||
+    (productName ? cleanText(text.slice(0, 220)) : null);
+  const documentType = /specification|product information|product sheet/i.test(text) ? "Product information document" : null;
+
+  const fields = [
+    makeField("document_type", documentType, evidence.document_type),
+    makeField("product_name", productName, evidence.product_name),
+    makeField("model_number", model, evidence.model_number),
+    makeField("product_description", description, evidence.product_description),
+    makeField("primary_material", primaryMaterial, evidence.primary_material),
+    makeField("secondary_materials", secondaryMaterials, evidence.primary_material),
+    makeField("components", components, evidence.components),
+    makeField("base_material", baseMaterial, evidence.base_material),
+    makeField("light_source", lightSource, evidence.light_source),
+    makeField("power_source", powerSource, evidence.power_source),
+    makeField("voltage", voltage, evidence.voltage),
+    makeField("wattage", wattage, evidence.wattage),
+    makeField("dimensions", dimensions, evidence.dimensions),
+    makeField("weight", weight, evidence.weight),
+    makeField("intended_use", intendedUse, evidence.intended_use),
+    makeField("country_of_origin", country, evidence.country_of_origin),
+  ];
+
+  const missingInformation = fields.filter((field) => field.status === "Missing").map((field) => field.label);
+
+  return {
+    document_type: documentType,
+    product_name: productName,
+    model_number: model,
+    product_description: description,
+    primary_material: primaryMaterial,
+    secondary_materials: secondaryMaterials,
+    components,
+    base_material: baseMaterial,
+    light_source: lightSource,
+    power_source: powerSource,
+    voltage,
+    wattage,
+    dimensions,
+    weight,
+    intended_use: intendedUse,
+    country_of_origin: country,
+    missing_information: missingInformation,
+    fields,
+  };
+}
+
+function buildRetrievalProfile(record) {
+  const values = [
+    record.product_name,
+    record.product_description,
+    record.primary_material,
+    record.base_material,
+    record.light_source,
+    record.power_source,
+    record.intended_use,
+    ...(record.secondary_materials || []),
+    ...(record.components || []),
+  ].filter(Boolean);
+  const haystack = values.join(" ").toLowerCase();
+  const concepts = uniqueValues([
+    record.product_name,
+    haystack.includes("lamp") ? "electric decorative lamp" : "",
+    haystack.includes("salt") ? "natural mineral lamp" : "",
+    haystack.includes("wood") ? "wood base" : "",
+    haystack.includes("bulb") ? "replaceable bulb" : "",
+    haystack.includes("cord") ? "electrical cord" : "",
+    haystack.includes("socket") ? "socket" : "",
+    haystack.includes("decorative") ? "decorative household lighting" : "",
+    haystack.includes("composite") || values.length > 3 ? "composite good" : "",
+    "essential character",
+  ]);
+
+  const query = uniqueValues([
+    record.product_name,
+    record.primary_material,
+    record.base_material,
+    record.light_source,
+    record.power_source,
+    record.intended_use,
+    ...concepts,
+  ]).join(" ");
+
+  return {
+    productClass: haystack.includes("lamp") ? "Electric decorative household lamp" : record.product_name || "Product class not established",
+    principalFunction: record.intended_use || null,
+    primaryMaterial: record.primary_material || null,
+    secondaryMaterials: record.secondary_materials || [],
+    electricalComponents: (record.components || []).filter((component) => /cord|socket|switch|bulb|electric/i.test(component)),
+    intendedUse: record.intended_use || null,
+    countryOfOrigin: record.country_of_origin || null,
+    classificationKeywords: concepts,
+    query,
+  };
+}
+
+async function retrieveCustomsPrecedents(client, profile) {
+  const indexId = process.env.LLAMA_CLOUD_INDEX_ID || "";
+
+  if (!indexId) {
+    return {
+      connected: false,
+      indexId: null,
+      query: profile.query,
+      results: [],
+      message: "No customs ruling index has been connected yet.",
+    };
+  }
+
+  const response = await client.beta.retrieval.retrieve({
+    index_id: indexId,
+    query: profile.query,
+    top_k: 5,
+  });
+
+  return {
+    connected: true,
+    indexId,
+    query: profile.query,
+    results: (response?.results || []).map((result) => ({
+      content: cleanText(result.content || "").slice(0, 900),
+      score: result.score ?? null,
+      rerankScore: result.rerank_score ?? null,
+      metadata: result.metadata || null,
+      staticFields: result.static_fields || null,
+    })),
+    message: "Customs ruling index retrieval completed.",
+  };
+}
+
 function getSafeLlamaError(error) {
   if (!error) {
     return "LlamaParse request failed.";
@@ -207,6 +467,22 @@ async function parsePdfWithLlamaParse(filePath) {
   );
 
   const pages = getMarkdownPages(result);
+  const productRecord = extractProductRecord(pages);
+  const retrievalProfile = buildRetrievalProfile(productRecord);
+  let customsRetrieval;
+
+  try {
+    customsRetrieval = await retrieveCustomsPrecedents(client, retrievalProfile);
+  } catch (error) {
+    console.error("Customs retrieval skipped:", getSafeLlamaError(error));
+    customsRetrieval = {
+      connected: Boolean(process.env.LLAMA_CLOUD_INDEX_ID),
+      indexId: process.env.LLAMA_CLOUD_INDEX_ID || null,
+      query: retrievalProfile.query,
+      results: [],
+      message: "Customs retrieval could not be completed. Document parsing still succeeded.",
+    };
+  }
 
   return {
     submitted: true,
@@ -218,6 +494,9 @@ async function parsePdfWithLlamaParse(filePath) {
     markdown: pages.map((page) => `<!-- Page ${page.pageNumber} -->\n${page.markdown}`).join("\n\n"),
     pages,
     completed: result?.job?.status === "COMPLETED",
+    productRecord,
+    retrievalProfile,
+    customsRetrieval,
   };
 }
 

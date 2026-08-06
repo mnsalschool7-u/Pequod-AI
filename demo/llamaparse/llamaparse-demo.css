@@ -483,6 +483,179 @@
   width: min(calc(100% - 48px), var(--container));
 }
 
+.analysis-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.8fr);
+  margin: 1.25rem auto 0;
+  max-width: var(--container);
+  padding: 0 24px;
+}
+
+.table-wrap {
+  overflow: auto;
+}
+
+.record-table {
+  border-collapse: collapse;
+  min-width: 880px;
+  width: 100%;
+}
+
+.record-table th,
+.record-table td {
+  border-bottom: 1px solid rgba(12, 32, 48, 0.1);
+  color: #405665;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  padding: 0.9rem 1rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.record-table th {
+  color: var(--ink);
+  font-family: "DM Mono", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.record-table td:first-child {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.table-status {
+  border-radius: 999px;
+  display: inline-flex;
+  font-family: "DM Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  padding: 0.32rem 0.52rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.table-status.extracted {
+  background: #e7f7ef;
+  color: #15623f;
+}
+
+.table-status.missing {
+  background: #fff0ed;
+  color: #9d2a1d;
+}
+
+.attention-list {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 1.2rem;
+}
+
+.attention-list li {
+  background: rgba(192, 111, 104, 0.08);
+  border: 1px solid rgba(192, 111, 104, 0.16);
+  border-radius: 16px;
+  color: #62312c;
+  font-weight: 700;
+  line-height: 1.45;
+  padding: 0.85rem 0.95rem;
+}
+
+.retrieval-panel {
+  margin: 1.25rem auto 0;
+  max-width: var(--container);
+  width: min(calc(100% - 48px), var(--container));
+}
+
+.retrieval-layout {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  padding: 1.2rem;
+}
+
+.retrieval-layout h3 {
+  color: var(--ink);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.9rem;
+}
+
+.profile-list {
+  border: 1px solid rgba(12, 32, 48, 0.1);
+  border-radius: 20px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.profile-list div {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.9rem 1rem;
+}
+
+.profile-list div + div {
+  border-top: 1px solid rgba(12, 32, 48, 0.1);
+}
+
+.profile-list dt {
+  color: var(--muted);
+  font-family: "DM Mono", monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-list dd {
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.5;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.retrieval-results {
+  background:
+    linear-gradient(180deg, rgba(120, 184, 220, 0.08), transparent 45%),
+    rgba(6, 18, 30, 0.97);
+  border: 1px solid rgba(120, 184, 220, 0.16);
+  border-radius: 20px;
+  color: #d9e9f1;
+  line-height: 1.7;
+  min-height: 220px;
+  padding: 1rem;
+}
+
+.retrieval-card {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 0.9rem;
+}
+
+.retrieval-card + .retrieval-card {
+  margin-top: 0.75rem;
+}
+
+.retrieval-card span,
+.retrieval-card small {
+  color: var(--blue-bright);
+  font-family: "DM Mono", monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.retrieval-card p {
+  color: #e9f5fb;
+  margin: 0.6rem 0;
+}
+
 .markdown-panel pre {
   background:
     linear-gradient(180deg, rgba(120, 184, 220, 0.06), transparent 34%),
@@ -537,7 +710,9 @@
   }
 
   .demo-hero,
-  .demo-grid {
+  .demo-grid,
+  .analysis-grid,
+  .retrieval-layout {
     grid-template-columns: 1fr;
   }
 
@@ -592,6 +767,14 @@
   }
 
   .markdown-panel {
+    width: min(calc(100% - 28px), var(--container));
+  }
+
+  .analysis-grid {
+    padding: 0 14px;
+  }
+
+  .retrieval-panel {
     width: min(calc(100% - 28px), var(--container));
   }
 
