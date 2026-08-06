@@ -197,7 +197,7 @@ function resetAnalysisPanels() {
   retrievalStatus.className = "status-chip idle";
   profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
   retrievalResults.textContent = "Public customs ruling search will run after parsing.";
-  hsCodeResults.textContent = "Parse a PDF to see HS codes cited in retrieved customs rulings.";
+  hsCodeResults.textContent = "Parse a PDF to generate a suggested HS code.";
 }
 
 function escapeHtml(value = "") {
@@ -321,7 +321,7 @@ function collectHsCodes(retrieval) {
   const results = Array.isArray(retrieval?.results) ? retrieval.results : [];
   const codes = new Map();
 
-  results.forEach((result) => {
+  results.forEach((result, resultIndex) => {
     const tariffs = Array.isArray(result.tariffs) ? result.tariffs : [];
 
     tariffs.forEach((code) => {
@@ -342,12 +342,43 @@ function collectHsCodes(retrieval) {
         rulingNumber: result.rulingNumber || "Not available",
         title: result.title || "Retrieved customs ruling",
         score: result.score ?? "Not available",
+        numericScore: Number(result.score) || 0,
+        resultIndex,
         url: result.url || "",
       });
     });
   });
 
   return Array.from(codes.values());
+}
+
+function selectSuggestedHsCode(codes) {
+  return codes
+    .map((item) => {
+      const bestSource = item.sources
+        .slice()
+        .sort((first, second) => {
+          if (second.numericScore !== first.numericScore) {
+            return second.numericScore - first.numericScore;
+          }
+
+          return first.resultIndex - second.resultIndex;
+        })[0];
+
+      return {
+        ...item,
+        bestSource,
+        bestScore: bestSource?.numericScore || 0,
+        bestRank: bestSource?.resultIndex ?? 999,
+      };
+    })
+    .sort((first, second) => {
+      if (second.bestScore !== first.bestScore) {
+        return second.bestScore - first.bestScore;
+      }
+
+      return first.bestRank - second.bestRank;
+    })[0];
 }
 
 function renderHsCodes(retrieval) {
@@ -359,26 +390,28 @@ function renderHsCodes(retrieval) {
   }
 
   if (codes.length === 0) {
-    hsCodeResults.textContent = "No HS codes were cited in the retrieved rulings.";
+    hsCodeResults.textContent = "No HS code could be generated for this product.";
     return;
   }
 
-  hsCodeResults.innerHTML = codes
-    .map((item) => `
-      <article class="hs-code-card">
-        <strong>${escapeHtml(item.code)}</strong>
-        <span>Found in ${escapeHtml(item.sources.length)} retrieved ${item.sources.length === 1 ? "ruling" : "rulings"}</span>
-        <ul>
-          ${item.sources.map((source) => `
-            <li>
-              ${source.url ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.rulingNumber)}</a>` : escapeHtml(source.rulingNumber)}
-              <small>${escapeHtml(source.title)} | Confidence: ${escapeHtml(source.score)}</small>
-            </li>
-          `).join("")}
-        </ul>
-      </article>
-    `)
-    .join("");
+  const suggested = selectSuggestedHsCode(codes);
+
+  hsCodeResults.innerHTML = `
+    <article class="hs-code-card hs-code-card-primary">
+      <span>Product HS code</span>
+      <strong>${escapeHtml(suggested.code)}</strong>
+      <p>Generated from the uploaded product document and supporting CBP precedent.</p>
+      <span>Supporting CBP evidence</span>
+      <ul>
+        ${suggested.sources.map((source) => `
+          <li>
+            ${source.url ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.rulingNumber)}</a>` : escapeHtml(source.rulingNumber)}
+            <small>${escapeHtml(source.title)} | Confidence: ${escapeHtml(source.score)}</small>
+          </li>
+        `).join("")}
+      </ul>
+    </article>
+  `;
 }
 
 form.addEventListener("submit", async (event) => {

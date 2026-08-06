@@ -749,12 +749,31 @@
   padding: 0.9rem;
 }
 
+.hs-code-card-primary {
+  background:
+    linear-gradient(135deg, rgba(247, 200, 115, 0.18), rgba(120, 184, 220, 0.08)),
+    rgba(6, 18, 30, 0.82);
+  border-color: rgba(247, 200, 115, 0.28);
+}
+
 .hs-code-card strong {
   color: #f7c873;
   display: block;
   font-family: "DM Mono", monospace;
   font-size: 1.05rem;
   letter-spacing: 0.04em;
+}
+
+.hs-code-card-primary strong {
+  font-size: clamp(1.65rem, 4vw, 2.35rem);
+  margin: 0.2rem 0 0.35rem;
+}
+
+.hs-code-card p {
+  color: #d9e9f1;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0 0 0.85rem;
 }
 
 .hs-code-card span {
