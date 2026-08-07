@@ -148,33 +148,19 @@
           <section class="product-visual-card" aria-labelledby="product-visual-heading">
             <div>
               <span class="micro-label">Product visual</span>
-              <h3 id="product-visual-heading">Extracted product photo</h3>
-              <p id="product-visual-note">
-                Parse a PDF to extract the product photo from the document.
-              </p>
+              <h3 id="product-visual-heading">Product photo</h3>
             </div>
             <div class="product-visual-preview">
-              <img id="product-visual-image" alt="Extracted product image from uploaded PDF" hidden />
+              <img id="product-visual-image" alt="Product image from uploaded PDF" hidden />
               <div class="product-visual-empty" id="product-visual-empty" aria-live="polite">
                 <span aria-hidden="true">◒</span>
-                <strong>No product photo extracted yet</strong>
-                <small>The demo will show a cropped product image if the parser returns one from the PDF.</small>
+                <strong>Product photo unavailable</strong>
+                <small>Upload a PDF with a product image to show it here.</small>
               </div>
             </div>
-            <dl class="product-visual-facts">
-              <div>
-                <dt>Visual source</dt>
-                <dd id="product-visual-source">Not available</dd>
-              </div>
-              <div>
-                <dt>Image status</dt>
-                <dd id="product-visual-status">Waiting</dd>
-              </div>
-              <div>
-                <dt>Images found</dt>
-                <dd id="product-visual-count">0</dd>
-              </div>
-            </dl>
+            <div class="product-visual-hs" id="hs-code-results">
+              Parse a PDF to generate a suggested HS code.
+            </div>
           </section>
 
           <details class="developer-box" open>
@@ -256,15 +242,6 @@
             <div class="retrieval-results" id="retrieval-results">
               Public customs ruling search will run after parsing.
             </div>
-          </div>
-        </div>
-        <div class="hs-code-panel" aria-labelledby="hs-code-heading">
-          <div>
-            <h3 id="hs-code-heading">HS Code for This Product</h3>
-            <p>Pequod suggested code based on product data and CBP precedent. Review before filing.</p>
-          </div>
-          <div class="hs-code-results" id="hs-code-results">
-            Parse a PDF to generate a suggested HS code.
           </div>
         </div>
       </section>

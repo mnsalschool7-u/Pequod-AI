@@ -10,10 +10,6 @@ const pdfPreview = document.querySelector("#pdf-preview");
 const pdfFrame = document.querySelector("#pdf-frame");
 const productVisualImage = document.querySelector("#product-visual-image");
 const productVisualEmpty = document.querySelector("#product-visual-empty");
-const productVisualNote = document.querySelector("#product-visual-note");
-const productVisualSource = document.querySelector("#product-visual-source");
-const productVisualStatus = document.querySelector("#product-visual-status");
-const productVisualCount = document.querySelector("#product-visual-count");
 const markdownOutput = document.querySelector("#markdown-output");
 const sourceFile = document.querySelector("#source-file");
 const pagesProcessed = document.querySelector("#pages-processed");
@@ -127,10 +123,6 @@ function showPreview(file) {
   productVisualImage.hidden = true;
   productVisualImage.removeAttribute("src");
   productVisualEmpty.hidden = false;
-  productVisualNote.textContent = "PDF selected. Parse it to extract the product photo.";
-  productVisualSource.textContent = file.name;
-  productVisualStatus.textContent = "Waiting for parser";
-  productVisualCount.textContent = "0";
   fileStatus.textContent = `${file.name} · ${formatBytes(file.size)}`;
 }
 
@@ -212,32 +204,23 @@ function resetAnalysisPanels() {
   profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
   retrievalResults.textContent = "Public customs ruling search will run after parsing.";
   hsCodeResults.textContent = "Parse a PDF to generate a suggested HS code.";
-  productVisualNote.textContent = "PDF selected. Parse it to extract the product photo.";
-  productVisualStatus.textContent = "Waiting for parser";
-  productVisualCount.textContent = "0";
 }
 
 function renderProductVisual(data) {
   const visual = data?.productVisual || {};
   const productName = data?.productRecord?.product_name || "product";
 
-  productVisualSource.textContent = visual.source || "LlamaParse image extraction";
-  productVisualStatus.textContent = visual.status || "No product image returned by parser.";
-  productVisualCount.textContent = String(visual.imageCount || 0);
-
   if (visual.available && visual.url) {
     productVisualImage.src = visual.url;
-    productVisualImage.alt = `${productName} image extracted from uploaded PDF`;
+    productVisualImage.alt = `${productName} product image`;
     productVisualImage.hidden = false;
     productVisualEmpty.hidden = true;
-    productVisualNote.textContent = "Showing the product photo extracted from the uploaded PDF.";
     return;
   }
 
   productVisualImage.hidden = true;
   productVisualImage.removeAttribute("src");
   productVisualEmpty.hidden = false;
-  productVisualNote.textContent = "No standalone product photo was returned from this PDF. The original PDF preview remains available on the left.";
 }
 
 function escapeHtml(value = "") {
@@ -440,7 +423,7 @@ function renderHsCodes(retrieval) {
     <article class="hs-code-card hs-code-card-primary">
       <span>Product HS code</span>
       <strong>${escapeHtml(suggested.code)}</strong>
-      <p>Generated from the uploaded product document and supporting CBP precedent.</p>
+      <p>Suggested from product data and CBP precedent. Review before filing.</p>
       <span>Supporting CBP evidence</span>
       <ul>
         ${suggested.sources.map((source) => `
