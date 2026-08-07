@@ -8,8 +8,8 @@ const useCustomsIndex = document.querySelector("#use-customs-index");
 const indexStatusMessage = document.querySelector("#index-status-message");
 const pdfPreview = document.querySelector("#pdf-preview");
 const pdfFrame = document.querySelector("#pdf-frame");
+const productVisualCard = document.querySelector(".product-visual-card");
 const productVisualImage = document.querySelector("#product-visual-image");
-const productVisualEmpty = document.querySelector("#product-visual-empty");
 const markdownOutput = document.querySelector("#markdown-output");
 const sourceFile = document.querySelector("#source-file");
 const pagesProcessed = document.querySelector("#pages-processed");
@@ -120,9 +120,8 @@ function showPreview(file) {
   previewUrl = URL.createObjectURL(file);
   pdfFrame.src = previewUrl;
   pdfPreview.hidden = false;
-  productVisualImage.hidden = true;
+  productVisualCard.hidden = true;
   productVisualImage.removeAttribute("src");
-  productVisualEmpty.hidden = false;
   fileStatus.textContent = `${file.name} · ${formatBytes(file.size)}`;
 }
 
@@ -204,6 +203,8 @@ function resetAnalysisPanels() {
   profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
   retrievalResults.textContent = "Public customs ruling search will run after parsing.";
   hsCodeResults.textContent = "Parse a PDF to generate a suggested HS code.";
+  productVisualCard.hidden = true;
+  productVisualImage.removeAttribute("src");
 }
 
 function renderProductVisual(data) {
@@ -213,14 +214,12 @@ function renderProductVisual(data) {
   if (visual.available && visual.url) {
     productVisualImage.src = visual.url;
     productVisualImage.alt = `${productName} product image`;
-    productVisualImage.hidden = false;
-    productVisualEmpty.hidden = true;
+    productVisualCard.hidden = false;
     return;
   }
 
-  productVisualImage.hidden = true;
+  productVisualCard.hidden = true;
   productVisualImage.removeAttribute("src");
-  productVisualEmpty.hidden = false;
 }
 
 function escapeHtml(value = "") {

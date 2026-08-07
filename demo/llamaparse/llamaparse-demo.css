@@ -532,6 +532,10 @@
   padding: 1rem;
 }
 
+.product-visual-card[hidden] {
+  display: none;
+}
+
 .product-visual-card h3 {
   color: var(--ink);
   font-size: 1rem;
@@ -556,32 +560,6 @@
   object-fit: contain;
   padding: 0.8rem;
   width: 100%;
-}
-
-.product-visual-empty {
-  align-items: center;
-  color: #d9e9f1;
-  display: grid;
-  gap: 0.5rem;
-  min-height: 220px;
-  padding: 1.2rem;
-  place-items: center;
-  text-align: center;
-}
-
-.product-visual-empty span {
-  color: #f7c873;
-  font-size: 2rem;
-}
-
-.product-visual-empty strong {
-  color: #ffffff;
-}
-
-.product-visual-empty small {
-  color: var(--muted);
-  line-height: 1.5;
-  max-width: 260px;
 }
 
 .product-visual-hs {
