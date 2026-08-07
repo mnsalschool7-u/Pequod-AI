@@ -6,8 +6,14 @@ const fileStatus = document.querySelector("#file-status");
 const parseStatus = document.querySelector("#parse-status");
 const useCustomsIndex = document.querySelector("#use-customs-index");
 const indexStatusMessage = document.querySelector("#index-status-message");
+const workspace = document.querySelector("#workspace");
 const pdfPreview = document.querySelector("#pdf-preview");
 const pdfFrame = document.querySelector("#pdf-frame");
+const sourcePanelLabel = document.querySelector("#source-panel-label");
+const sourcePanelTitle = document.querySelector("#source-panel-title");
+const sourceCallout = document.querySelector("#source-callout");
+const sourceCalloutPage = document.querySelector("#source-callout-page");
+const sourceCalloutText = document.querySelector("#source-callout-text");
 const productVisualCard = document.querySelector(".product-visual-card");
 const productVisualImage = document.querySelector("#product-visual-image");
 const markdownOutput = document.querySelector("#markdown-output");
@@ -120,9 +126,39 @@ function showPreview(file) {
   previewUrl = URL.createObjectURL(file);
   pdfFrame.src = previewUrl;
   pdfPreview.hidden = false;
+  workspace.classList.remove("is-parsed");
+  sourcePanelLabel.textContent = "Original document";
+  sourcePanelTitle.textContent = "PDF upload";
+  sourceCallout.hidden = true;
   productVisualCard.hidden = true;
   productVisualImage.removeAttribute("src");
   fileStatus.textContent = `${file.name} · ${formatBytes(file.size)}`;
+}
+
+function getPdfSearchText(text = "") {
+  return `${text}`
+    .replace(/Page\s+\d+/gi, "")
+    .replace(/[^\w\s.]/g, " ")
+    .split(/\s+/)
+    .filter((word) => word.length > 2)
+    .slice(0, 10)
+    .join(" ");
+}
+
+function focusPdfSource(page, text = "") {
+  if (!previewUrl || !page) {
+    return;
+  }
+
+  const searchText = getPdfSearchText(text);
+  const pageTarget = `${previewUrl}#page=${encodeURIComponent(page)}${searchText ? `&search=${encodeURIComponent(searchText)}` : ""}`;
+
+  pdfFrame.src = pageTarget;
+  pdfPreview.hidden = false;
+  sourceCalloutPage.textContent = `Page ${page}`;
+  sourceCalloutText.textContent = text || "Supporting source text selected.";
+  sourceCallout.hidden = false;
+  document.querySelector(".upload-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function handleFileSelection(file) {
@@ -177,6 +213,9 @@ dropZone.addEventListener("drop", (event) => {
 });
 
 function updateFromResponse(data) {
+  workspace.classList.add("is-parsed");
+  sourcePanelLabel.textContent = "Source evidence";
+  sourcePanelTitle.textContent = "PDF source";
   sourceFile.textContent = data.originalName || "Uploaded PDF";
   pagesProcessed.textContent = data.pagesProcessed ? String(data.pagesProcessed) : "Not available";
   outputFormat.textContent = data.outputFormat || "Not available";
@@ -195,6 +234,10 @@ function updateFromResponse(data) {
 }
 
 function resetAnalysisPanels() {
+  workspace.classList.remove("is-parsed");
+  sourcePanelLabel.textContent = "Original document";
+  sourcePanelTitle.textContent = "PDF upload";
+  sourceCallout.hidden = true;
   structuredCount.textContent = "Ready";
   recordTableBody.innerHTML = `<tr><td colspan="4">Parse the selected PDF to extract document supported product facts.</td></tr>`;
   attentionList.innerHTML = "<li>Parse the selected PDF to identify additional classification inputs.</li>";
@@ -258,8 +301,8 @@ function renderProductRecord(record) {
         <td><span class="table-status ${escapeHtml(field.status.toLowerCase())}">${escapeHtml(field.status)}</span></td>
         <td>
           ${field.sourcePage ? `
-            <details class="source-details">
-              <summary>Page ${escapeHtml(field.sourcePage)}</summary>
+            <details class="source-details" data-source-page="${escapeHtml(field.sourcePage)}" data-source-text="${escapeHtml(field.supportingText || "")}">
+              <summary>View source</summary>
               <p>${escapeHtml(field.supportingText || "Source text unavailable")}</p>
             </details>
           ` : "None"}
@@ -621,5 +664,15 @@ productVisualImage.addEventListener("error", () => {
   productVisualCard.hidden = true;
   productVisualImage.removeAttribute("src");
 });
+
+recordTableBody.addEventListener("toggle", (event) => {
+  const details = event.target;
+
+  if (!(details instanceof HTMLDetailsElement) || !details.classList.contains("source-details") || !details.open) {
+    return;
+  }
+
+  focusPdfSource(details.dataset.sourcePage, details.dataset.sourceText || details.textContent || "");
+}, true);
 
 loadIndexStatus();

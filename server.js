@@ -235,18 +235,20 @@ function uniqueValues(values = []) {
 }
 
 function getPageLines(pages) {
+  const longDashPattern = /[\u2013\u2014]/g;
+
   return pages.flatMap((page) => `${page.markdown || ""}`
     .split(/\r?\n/)
     .map(cleanText)
     .filter(Boolean)
     .map((line) => ({
       page: page.pageNumber,
-      text: line.replace(/[–—]/g, "-"),
+      text: line.replace(longDashPattern, "-"),
     })));
 }
 
 function stripMarkdownBullet(value = "") {
-  return cleanText(value.replace(/^[*•\-\s]+/, "").replace(/[–—]/g, "-"));
+  return cleanText(value.replace(/^[*•\-\s]+/, "").replace(/[\u2013\u2014]/g, "-"));
 }
 
 function normalizeFieldValue(value = "") {

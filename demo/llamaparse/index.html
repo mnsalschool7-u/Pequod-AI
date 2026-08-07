@@ -75,8 +75,8 @@
         <article class="panel upload-panel">
           <div class="panel-head">
             <div>
-              <span class="micro-label">Original document</span>
-              <h2>PDF upload</h2>
+              <span class="micro-label" id="source-panel-label">Original document</span>
+              <h2 id="source-panel-title">PDF upload</h2>
             </div>
             <span class="status-chip" id="file-status">No file selected</span>
           </div>
@@ -102,6 +102,11 @@
 
           <div class="pdf-preview" id="pdf-preview" hidden>
             <iframe id="pdf-frame" title="Uploaded PDF preview"></iframe>
+          </div>
+          <div class="source-callout" id="source-callout" hidden>
+            <span class="micro-label">Active source evidence</span>
+            <strong id="source-callout-page">Page</strong>
+            <p id="source-callout-text"></p>
           </div>
         </article>
 
