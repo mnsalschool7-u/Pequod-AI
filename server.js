@@ -153,16 +153,37 @@ function getProductVisual(result) {
   const images = Array.isArray(result?.images_content_metadata?.images)
     ? result.images_content_metadata.images
     : [];
-  const embeddedImage = images.find((image) => image?.category === "embedded" && image.presigned_url);
-  const fallbackImage = images.find((image) => image?.presigned_url);
-  const selectedImage = embeddedImage || fallbackImage || null;
+  const candidates = images
+    .filter((image) => image?.presigned_url && image.category !== "screenshot")
+    .map((image) => {
+      const area = Number(image?.bbox?.w || 0) * Number(image?.bbox?.h || 0);
+      const categoryScore = image.category === "layout" ? 3 : image.category === "embedded" ? 2 : 1;
+
+      return {
+        image,
+        area,
+        categoryScore,
+      };
+    })
+    .sort((first, second) => {
+      if (second.categoryScore !== first.categoryScore) {
+        return second.categoryScore - first.categoryScore;
+      }
+
+      if (second.area !== first.area) {
+        return second.area - first.area;
+      }
+
+      return Number(first.image.index || 0) - Number(second.image.index || 0);
+    });
+  const selectedImage = candidates[0]?.image || null;
 
   if (!selectedImage) {
     return {
       available: false,
-      status: images.length > 0 ? "Images returned without a usable URL." : "No embedded image returned by parser.",
+      status: images.length > 0 ? "Images returned, but no cropped product image was available." : "No product image returned by parser.",
       imageCount: images.length,
-      source: "LlamaParse embedded image extraction",
+      source: "LlamaParse image extraction",
       url: null,
       filename: null,
       contentType: null,
@@ -172,9 +193,9 @@ function getProductVisual(result) {
 
   return {
     available: true,
-    status: selectedImage.category === "embedded" ? "Embedded PDF image extracted" : "Parser image asset extracted",
+    status: selectedImage.category === "layout" ? "Cropped product image extracted" : "Embedded product image extracted",
     imageCount: images.length,
-    source: "LlamaParse embedded image extraction",
+    source: "LlamaParse image extraction",
     url: selectedImage.presigned_url,
     filename: selectedImage.filename || "Extracted image",
     contentType: selectedImage.content_type || null,
@@ -688,7 +709,7 @@ async function parsePdfWithLlamaParse(filePath, options = {}) {
         upload_file: fs.createReadStream(filePath),
         tier: "cost_effective",
         version: "latest",
-        output_options: { images_to_save: ["embedded"] },
+        output_options: { images_to_save: ["layout", "embedded"] },
         expand: ["markdown", "images_content_metadata"],
       },
       {

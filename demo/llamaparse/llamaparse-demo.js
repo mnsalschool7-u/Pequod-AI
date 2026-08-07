@@ -127,7 +127,7 @@ function showPreview(file) {
   productVisualImage.hidden = true;
   productVisualImage.removeAttribute("src");
   productVisualEmpty.hidden = false;
-  productVisualNote.textContent = "PDF selected. Parse it to extract an embedded product image.";
+  productVisualNote.textContent = "PDF selected. Parse it to extract the product photo.";
   productVisualSource.textContent = file.name;
   productVisualStatus.textContent = "Waiting for parser";
   productVisualCount.textContent = "0";
@@ -212,7 +212,7 @@ function resetAnalysisPanels() {
   profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
   retrievalResults.textContent = "Public customs ruling search will run after parsing.";
   hsCodeResults.textContent = "Parse a PDF to generate a suggested HS code.";
-  productVisualNote.textContent = "PDF selected. Parse it to extract an embedded product image.";
+  productVisualNote.textContent = "PDF selected. Parse it to extract the product photo.";
   productVisualStatus.textContent = "Waiting for parser";
   productVisualCount.textContent = "0";
 }
@@ -221,8 +221,8 @@ function renderProductVisual(data) {
   const visual = data?.productVisual || {};
   const productName = data?.productRecord?.product_name || "product";
 
-  productVisualSource.textContent = visual.source || "LlamaParse embedded image extraction";
-  productVisualStatus.textContent = visual.status || "No embedded image returned by parser.";
+  productVisualSource.textContent = visual.source || "LlamaParse image extraction";
+  productVisualStatus.textContent = visual.status || "No product image returned by parser.";
   productVisualCount.textContent = String(visual.imageCount || 0);
 
   if (visual.available && visual.url) {
@@ -230,14 +230,14 @@ function renderProductVisual(data) {
     productVisualImage.alt = `${productName} image extracted from uploaded PDF`;
     productVisualImage.hidden = false;
     productVisualEmpty.hidden = true;
-    productVisualNote.textContent = "Showing the embedded product image extracted from the uploaded PDF.";
+    productVisualNote.textContent = "Showing the product photo extracted from the uploaded PDF.";
     return;
   }
 
   productVisualImage.hidden = true;
   productVisualImage.removeAttribute("src");
   productVisualEmpty.hidden = false;
-  productVisualNote.textContent = "No embedded product photo was returned from this PDF. The original PDF preview remains available on the left.";
+  productVisualNote.textContent = "No standalone product photo was returned from this PDF. The original PDF preview remains available on the left.";
 }
 
 function escapeHtml(value = "") {
