@@ -501,4 +501,9 @@ window.addEventListener("beforeunload", () => {
   }
 });
 
+productVisualImage.addEventListener("error", () => {
+  productVisualCard.hidden = true;
+  productVisualImage.removeAttribute("src");
+});
+
 loadIndexStatus();
