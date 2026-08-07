@@ -305,6 +305,30 @@ function renderRetrievalProfile(profile) {
     .join("");
 }
 
+function getConfidenceScore(value) {
+  const score = Number(value);
+
+  return Number.isFinite(score) ? score : -1;
+}
+
+function getRankedRetrievalResults(retrieval) {
+  const results = Array.isArray(retrieval?.results) ? retrieval.results : [];
+
+  return results
+    .map((result, index) => ({
+      ...result,
+      originalIndex: index,
+      confidenceScore: getConfidenceScore(result.score),
+    }))
+    .sort((first, second) => {
+      if (second.confidenceScore !== first.confidenceScore) {
+        return second.confidenceScore - first.confidenceScore;
+      }
+
+      return first.originalIndex - second.originalIndex;
+    });
+}
+
 function renderRetrievalResults(retrieval) {
   if (!retrieval?.connected) {
     retrievalStatus.textContent = "Unavailable";
@@ -316,15 +340,17 @@ function renderRetrievalResults(retrieval) {
   retrievalStatus.textContent = retrieval.provider || "Connected";
   retrievalStatus.className = "status-chip success";
 
-  if (!Array.isArray(retrieval.results) || retrieval.results.length === 0) {
+  const rankedResults = getRankedRetrievalResults(retrieval);
+
+  if (rankedResults.length === 0) {
     retrievalResults.textContent = retrieval.message || "Customs ruling search returned no matching documents.";
     return;
   }
 
-  retrievalResults.innerHTML = retrieval.results
+  retrievalResults.innerHTML = rankedResults
     .map((result, index) => `
       <article class="retrieval-card">
-        <span>${escapeHtml(result.rulingNumber || `Result ${index + 1}`)}</span>
+        <span>Rank ${index + 1} | ${escapeHtml(result.rulingNumber || `Result ${index + 1}`)}</span>
         <h4>${escapeHtml(result.title || `Result ${index + 1}`)}</h4>
         <p>${escapeHtml(result.content)}</p>
         <small>
@@ -340,7 +366,7 @@ function renderRetrievalResults(retrieval) {
 }
 
 function collectHsCodes(retrieval) {
-  const results = Array.isArray(retrieval?.results) ? retrieval.results : [];
+  const results = getRankedRetrievalResults(retrieval);
   const codes = new Map();
 
   results.forEach((result, resultIndex) => {
@@ -374,7 +400,7 @@ function collectHsCodes(retrieval) {
   return Array.from(codes.values());
 }
 
-function selectSuggestedHsCode(codes) {
+function getRankedHsCodes(codes) {
   return codes
     .map((item) => {
       const bestSource = item.sources
@@ -400,7 +426,7 @@ function selectSuggestedHsCode(codes) {
       }
 
       return first.bestRank - second.bestRank;
-    })[0];
+    });
 }
 
 function renderHsCodes(retrieval) {
@@ -416,13 +442,15 @@ function renderHsCodes(retrieval) {
     return;
   }
 
-  const suggested = selectSuggestedHsCode(codes);
+  const rankedCodes = getRankedHsCodes(codes);
+  const suggested = rankedCodes[0];
+  const otherCodes = rankedCodes.slice(1);
 
   hsCodeResults.innerHTML = `
     <article class="hs-code-card hs-code-card-primary">
-      <span>Product HS code</span>
+      <span>Rank 1 | Product HS code</span>
       <strong>${escapeHtml(suggested.code)}</strong>
-      <p>Suggested from product data and CBP precedent. Review before filing.</p>
+      <p>Confidence: ${escapeHtml(suggested.bestSource?.score ?? "Not available")}. Review before filing.</p>
       <span>Supporting CBP evidence</span>
       <ul>
         ${suggested.sources.map((source) => `
@@ -432,6 +460,17 @@ function renderHsCodes(retrieval) {
           </li>
         `).join("")}
       </ul>
+      ${otherCodes.length > 0 ? `
+        <div class="hs-code-ranked-list">
+          ${otherCodes.map((item, index) => `
+            <div>
+              <span>Rank ${index + 2}</span>
+              <strong>${escapeHtml(item.code)}</strong>
+              <small>Confidence: ${escapeHtml(item.bestSource?.score ?? "Not available")}</small>
+            </div>
+          `).join("")}
+        </div>
+      ` : ""}
     </article>
   `;
 }

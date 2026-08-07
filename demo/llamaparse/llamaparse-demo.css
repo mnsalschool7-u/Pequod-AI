@@ -859,6 +859,37 @@
   line-height: 1.45;
 }
 
+.hs-code-ranked-list {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+}
+
+.hs-code-ranked-list div {
+  align-items: center;
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: auto 1fr;
+}
+
+.hs-code-ranked-list span {
+  color: #8fb8cf;
+  grid-row: span 2;
+  margin: 0;
+}
+
+.hs-code-ranked-list strong {
+  color: #e9f5fb;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.hs-code-ranked-list small {
+  grid-column: 2;
+}
+
 .markdown-panel pre {
   background:
     linear-gradient(180deg, rgba(120, 184, 220, 0.06), transparent 34%),
