@@ -234,6 +234,102 @@ function uniqueValues(values = []) {
   return Array.from(new Set(values.map(cleanText).filter(Boolean)));
 }
 
+function getPageLines(pages) {
+  return pages.flatMap((page) => `${page.markdown || ""}`
+    .split(/\r?\n/)
+    .map(cleanText)
+    .filter(Boolean)
+    .map((line) => ({
+      page: page.pageNumber,
+      text: line.replace(/[–—]/g, "-"),
+    })));
+}
+
+function stripMarkdownBullet(value = "") {
+  return cleanText(value.replace(/^[*•\-\s]+/, "").replace(/[–—]/g, "-"));
+}
+
+function normalizeFieldValue(value = "") {
+  return stripMarkdownBullet(value)
+    .replace(/\s+PK$/i, "")
+    .replace(/\bLB\b/g, "lb")
+    .replace(/\bLBS\b/g, "lb")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function findLineEvidence(lines, patterns) {
+  for (const line of lines) {
+    if (patterns.some((pattern) => pattern.test(line.text))) {
+      return {
+        page: line.page,
+        excerpt: line.text.slice(0, 220),
+        line: line.text,
+      };
+    }
+  }
+
+  return null;
+}
+
+function findLabeledLineValue(lines, labels, valuePattern = /(.+)/i) {
+  const labelPattern = labels.map((label) => label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  const pattern = new RegExp(`^(?:${labelPattern})\\s*[:|]\\s*(.+)$`, "i");
+
+  for (const line of lines) {
+    const labelMatch = line.text.match(pattern);
+
+    if (!labelMatch?.[1]) {
+      continue;
+    }
+
+    const valueMatch = labelMatch[1].match(valuePattern);
+    const value = normalizeFieldValue(valueMatch?.[1] || labelMatch[1]);
+
+    if (value) {
+      return {
+        value,
+        evidence: {
+          page: line.page,
+          excerpt: line.text.slice(0, 220),
+        },
+      };
+    }
+  }
+
+  return {
+    value: null,
+    evidence: null,
+  };
+}
+
+function findFirstLineValue(lines, patterns, normalizer = normalizeFieldValue) {
+  for (const line of lines) {
+    for (const pattern of patterns) {
+      const match = line.text.match(pattern);
+
+      if (match?.[1]) {
+        const value = normalizer(match[1]);
+
+        if (value) {
+          return {
+            value,
+            evidence: {
+              page: line.page,
+              excerpt: line.text.slice(0, 220),
+            },
+          };
+        }
+      }
+    }
+  }
+
+  return {
+    value: null,
+    evidence: null,
+  };
+}
+
 function findPageEvidence(pages, patterns) {
   for (const page of pages) {
     const lines = `${page.markdown || ""}`
@@ -269,6 +365,7 @@ function findFirstMatch(text, patterns) {
 function makeField(key, value, evidence = null, status = "Extracted") {
   const isArray = Array.isArray(value);
   const hasValue = isArray ? value.length > 0 : Boolean(value);
+  const displayStatus = hasValue ? status === "Extracted" ? "Found" : status : "Missing";
 
   return {
     key,
@@ -276,7 +373,7 @@ function makeField(key, value, evidence = null, status = "Extracted") {
     value: hasValue ? value : isArray ? [] : null,
     sourcePage: hasValue ? evidence?.page || null : null,
     supportingText: hasValue ? evidence?.excerpt || "" : "",
-    status: hasValue ? status : "Missing",
+    status: displayStatus,
   };
 }
 
@@ -284,6 +381,7 @@ function extractProductRecord(pages) {
   const markdown = pages.map((page) => page.markdown || "").join("\n");
   const text = cleanText(markdown);
   const lower = text.toLowerCase();
+  const lines = getPageLines(pages);
 
   const evidence = {
     document_type: findPageEvidence(pages, [/product information/i, /specification/i, /product sheet/i, /manual/i]),
@@ -303,61 +401,89 @@ function extractProductRecord(pages) {
     country_of_origin: findPageEvidence(pages, [/country of origin/i, /made in/i, /origin/i]),
   };
 
-  const productName =
-    findFirstMatch(text, [
-      /product name\s*[:|]\s*([^\n\r]+)/i,
-      /item name\s*[:|]\s*([^\n\r]+)/i,
-      /([A-Z][A-Za-z0-9 ]{2,80}\s+salt lamp)/i,
-    ]) || (lower.includes("salt lamp") ? "Salt lamp" : null);
+  const labeledProductName = findLabeledLineValue(lines, ["Product name", "Item name", "Product type"]);
+  const titleProductName = findFirstLineValue(lines, [
+    /^([A-Za-z0-9][A-Za-z0-9 &,'()/-]{2,90}\blamp\b)$/i,
+    /^([A-Za-z0-9][A-Za-z0-9 &,'()/-]{2,90}\bsalt\b[A-Za-z0-9 &,'()/-]{0,60})$/i,
+  ]);
+  const productName = labeledProductName.value || titleProductName.value || null;
+  const productNameEvidence = labeledProductName.evidence || titleProductName.evidence || evidence.product_name;
 
   const components = uniqueValues([
+    /natural salt|salt crystal|himalayan/i.test(text) ? "Natural salt body" : "",
+    /color.?changing led|led/i.test(text) ? "Color changing LED" : "",
+    /\busb\b/i.test(text) ? "USB power connection" : "",
     lower.includes("cord") ? "Electrical cord" : "",
     lower.includes("socket") ? "Socket" : "",
     lower.includes("switch") ? "Switch" : "",
-    lower.includes("bulb") ? "Replaceable bulb" : "",
+    lower.includes("bulb") ? "Bulb" : "",
     lower.includes("base") ? "Base" : "",
   ]);
 
   const secondaryMaterials = uniqueValues([
-    lower.includes("wood") ? "Wood" : "",
-    lower.includes("metal") ? "Metal" : "",
     lower.includes("plastic") ? "Plastic" : "",
+    lower.includes("metal") ? "Metal" : "",
+    /wood|wooden/i.test(text) ? "Wood" : "",
   ]);
 
-  const voltage = findFirstMatch(text, [/(\b\d{2,3}\s?v(?:olts?)?\b)/i, /voltage\s*[:|]\s*([^\n\r]+)/i]);
-  const wattage = findFirstMatch(text, [/(\b\d{1,4}\s?w(?:atts?)?\b)/i, /wattage\s*[:|]\s*([^\n\r]+)/i]);
-  const dimensions = findFirstMatch(text, [/dimensions?\s*[:|]\s*([^\n\r]+)/i]);
-  const weight = findFirstMatch(text, [/weight\s*[:|]\s*([^\n\r]+)/i]);
-  const country = findFirstMatch(text, [/country of origin\s*[:|]\s*([^\n\r]+)/i, /made in\s+([A-Za-z ]{2,60})/i]);
-  const model = findFirstMatch(text, [/(?:model|sku|item no\.?|item number)\s*[:|]\s*([A-Za-z0-9 ._/]+)/i]);
-  const intendedUse = findFirstMatch(text, [/intended use\s*[:|]\s*([^\n\r]+)/i]) ||
-    (/(decorative|ambient|household)/i.test(text) ? cleanText(text.match(/.{0,80}(decorative|ambient|household).{0,80}/i)?.[0] || "") : null);
+  const voltageResult = findLabeledLineValue(lines, ["Voltage"], /(\b\d{1,3}\s?v(?:olts?)?\b)/i);
+  const powerLine = findLabeledLineValue(lines, ["Power"]);
+  const voltageFromPower = findFirstLineValue(lines, [/power\s*[:|]\s*.*?(\b\d{1,3}\s?v(?:olts?)?\b)/i]);
+  const wattageResult = findLabeledLineValue(lines, ["Wattage", "Watts"], /(\b\d{1,4}\s?w(?:atts?)?\b)/i);
+  const dimensionsResult = findLabeledLineValue(lines, ["Dimensions", "Size"], /(\b\d+(?:\.\d+)?\s*x\s*\d+(?:\.\d+)?\s*x\s*\d+(?:\.\d+)?\s*(?:inches|inch|in|cm|mm)?\b)/i);
+  const weightResult = findLabeledLineValue(lines, ["Weight"], /((?:approx\.?\s*)?\d+(?:\.\d+)?\s*(?:lb|lbs|kg|g)\b)/i);
+  const countryResult = findLabeledLineValue(lines, ["Country of origin", "Origin"], /([A-Za-z ]{2,60})(?:\s+[A-Z]{2})?$/i);
+  const modelResult = findLabeledLineValue(lines, ["Model", "SKU", "Item no.", "Item no", "Item number"]);
+  const materialResult = findLabeledLineValue(lines, ["Primary material", "Material"]);
+  const lightSourceResult = findLabeledLineValue(lines, ["Light source"]);
 
-  const primaryMaterial = /himalayan|rock salt|salt/i.test(text) ? "Natural salt" : findFirstMatch(text, [/primary material\s*[:|]\s*([^\n\r]+)/i, /material\s*[:|]\s*([^\n\r]+)/i]);
-  const baseMaterial = /wooden base|wood base/i.test(text) ? "Wood" : null;
-  const lightSource = /replaceable bulb|bulb/i.test(text) ? "Replaceable bulb" : null;
-  const powerSource = /electric|cord|plug/i.test(text) ? "Electrical cord" : null;
-  const description = findFirstMatch(text, [/description\s*[:|]\s*([^\n\r]+)/i]) ||
-    (productName ? cleanText(text.slice(0, 220)) : null);
-  const documentType = /specification|product information|product sheet/i.test(text) ? "Product information document" : null;
+  const primaryMaterial = materialResult.value ||
+    (/natural himalayan pink salt/i.test(text) ? "Natural Himalayan Pink Salt" : /natural salt crystal|himalayan|rock salt|salt crystal/i.test(text) ? "Natural salt" : null);
+  const primaryMaterialEvidence = materialResult.evidence || findLineEvidence(lines, [/natural himalayan pink salt/i, /natural salt crystal/i, /himalayan/i]);
+  const baseMaterialEvidence = findLineEvidence(lines, [/wooden base/i, /wood base/i, /plastic base/i, /base material/i]);
+  const baseMaterial = /wooden base|wood base/i.test(baseMaterialEvidence?.line || "") ? "Wood" :
+    /plastic base/i.test(baseMaterialEvidence?.line || "") ? "Plastic" : null;
+  const lightSource = lightSourceResult.value ||
+    (/color.?changing led/i.test(text) ? "Color changing LED" : /\bled\b/i.test(text) ? "LED" : /replaceable bulb|bulb/i.test(text) ? "Bulb" : null);
+  const lightSourceEvidence = lightSourceResult.evidence || findLineEvidence(lines, [/color.?changing led/i, /\bled\b/i, /bulb/i]);
+  const powerSource = /\busb\b/i.test(powerLine.value || text) ? "USB" : /electric|cord|plug/i.test(text) ? "Electrical" : null;
+  const powerSourceEvidence = powerLine.evidence || findLineEvidence(lines, [/\busb\b/i, /power source/i, /electric/i]);
+  const voltage = voltageResult.value || voltageFromPower.value || null;
+  const voltageEvidence = voltageResult.evidence || voltageFromPower.evidence || null;
+  const wattage = wattageResult.value || null;
+  const dimensions = dimensionsResult.value || null;
+  const weight = weightResult.value ? normalizeFieldValue(weightResult.value) : null;
+  const country = countryResult.value || null;
+  const intendedUseEvidence = findLineEvidence(lines, [/Perfect For/i, /ambient lighting/i, /bedroom/i, /meditation/i, /desk/i, /home decor/i]);
+  const intendedUse = intendedUseEvidence
+    ? uniqueValues(lines
+      .filter((line) => /bedroom|night light|desk|office|meditation|yoga|ambient lighting|decor|gift/i.test(line.text))
+      .map((line) => normalizeFieldValue(line.text.replace(/^Perfect For:?/i, ""))))
+      .slice(0, 5)
+      .join("; ")
+    : null;
+  const descriptionEvidence = findLineEvidence(lines, [/Create a warm/i, /Made from/i, /This lamp/i]);
+  const description = findFirstMatch(markdown, [/description\s*[:|]\s*([^\n\r]+)/i]) ||
+    (descriptionEvidence ? normalizeFieldValue(descriptionEvidence.line).slice(0, 180) : null);
+  const documentType = /product details|product information|specification|product sheet/i.test(text) ? "Product information document" : null;
 
   const fields = [
-    makeField("document_type", documentType, evidence.document_type),
-    makeField("product_name", productName, evidence.product_name),
-    makeField("model_number", model, evidence.model_number),
+    makeField("document_type", documentType, findLineEvidence(lines, [/product details/i, /product information/i, /specification/i, /product sheet/i])),
+    makeField("product_name", productName, productNameEvidence),
+    makeField("model_number", modelResult.value, modelResult.evidence),
     makeField("product_description", description, evidence.product_description),
-    makeField("primary_material", primaryMaterial, evidence.primary_material),
-    makeField("secondary_materials", secondaryMaterials, evidence.primary_material),
+    makeField("primary_material", primaryMaterial, primaryMaterialEvidence),
+    makeField("secondary_materials", secondaryMaterials, findLineEvidence(lines, [/plastic/i, /metal/i, /wood/i])),
     makeField("components", components, evidence.components),
-    makeField("base_material", baseMaterial, evidence.base_material),
-    makeField("light_source", lightSource, evidence.light_source),
-    makeField("power_source", powerSource, evidence.power_source),
-    makeField("voltage", voltage, evidence.voltage),
-    makeField("wattage", wattage, evidence.wattage),
-    makeField("dimensions", dimensions, evidence.dimensions),
-    makeField("weight", weight, evidence.weight),
-    makeField("intended_use", intendedUse, evidence.intended_use),
-    makeField("country_of_origin", country, evidence.country_of_origin),
+    makeField("base_material", baseMaterial, baseMaterialEvidence),
+    makeField("light_source", lightSource, lightSourceEvidence),
+    makeField("power_source", powerSource, powerSourceEvidence),
+    makeField("voltage", voltage, voltageEvidence),
+    makeField("wattage", wattage, wattageResult.evidence),
+    makeField("dimensions", dimensions, dimensionsResult.evidence),
+    makeField("weight", weight, weightResult.evidence),
+    makeField("intended_use", intendedUse, intendedUseEvidence),
+    makeField("country_of_origin", country, countryResult.evidence),
   ];
 
   const missingInformation = fields.filter((field) => field.status === "Missing").map((field) => field.label);
@@ -399,8 +525,12 @@ function buildRetrievalProfile(record) {
   const haystack = values.join(" ").toLowerCase();
   const concepts = uniqueValues([
     record.product_name,
+    haystack.includes("color changing") || haystack.includes("color-changing") ? "color changing salt lamp" : "",
     haystack.includes("lamp") ? "electric decorative lamp" : "",
     haystack.includes("salt") ? "natural mineral lamp" : "",
+    haystack.includes("himalayan") && haystack.includes("salt") ? "himalayan salt lamp" : "",
+    haystack.includes("usb") ? "USB powered lighting" : "",
+    haystack.includes("led") ? "LED lighting" : "",
     haystack.includes("wood") ? "wood base" : "",
     haystack.includes("bulb") ? "replaceable bulb" : "",
     haystack.includes("cord") ? "electrical cord" : "",
@@ -421,6 +551,7 @@ function buildRetrievalProfile(record) {
   ]).join(" ");
 
   return {
+    legalTask: "Tariff classification",
     productClass: haystack.includes("lamp") ? "Electric decorative household lamp" : record.product_name || "Product class not established",
     principalFunction: record.intended_use || null,
     primaryMaterial: record.primary_material || null,
@@ -445,6 +576,9 @@ function getCbpSearchTerms(profile) {
     ...keywords,
   ].filter(Boolean).join(" ").toLowerCase();
   const focusedTerms = [
+    haystack.includes("color") && haystack.includes("salt") && haystack.includes("lamp")
+      ? "color changing salt lamp"
+      : "",
     haystack.includes("himalayan") && haystack.includes("salt") && haystack.includes("lamp")
       ? "Himalayan salt lamp"
       : "",
@@ -524,15 +658,24 @@ function scoreCbpRuling(ruling, detailText, keywords, rank) {
     ...(ruling?.tariffs || []),
     detailText,
   ].filter(Boolean).join(" ")).toLowerCase();
+  const categories = cleanText(ruling?.categories || "").toLowerCase();
   const matchedKeywords = keywords.filter((keyword) => haystack.includes(keyword.toLowerCase()));
-  const rankScore = Math.max(0, 28 - rank * 4);
-  const keywordScore = Math.min(36, matchedKeywords.length * 5);
+  const isClassification = /classification|htsus|tariff/.test(categories) || /tariff classification|applicable subheading|classified under|htsus/i.test(detailText);
+  const isCountry = /country|origin|marking/.test(categories) || /country of origin|origin determination|marking/i.test(detailText);
+  const legalIssueScore = isClassification ? 42 : isCountry ? -28 : 0;
+  const rankScore = Math.max(0, 18 - rank * 3);
+  const keywordScore = Math.min(30, matchedKeywords.length * 4);
   const exactSaltLampScore = haystack.includes("salt lamp") ? 14 : 0;
-  const tariffScore = Array.isArray(ruling?.tariffs) && ruling.tariffs.length > 0 ? 8 : 0;
-  const confidence = Math.min(96, Math.max(35, 30 + rankScore + keywordScore + exactSaltLampScore + tariffScore));
+  const colorLedScore = /color.?changing/.test(haystack) && /\bled\b/.test(haystack) ? 18 : 0;
+  const tariffScore = Array.isArray(ruling?.tariffs) && ruling.tariffs.length > 0 ? 14 : 0;
+  const relevanceScore = Math.max(1, legalIssueScore + rankScore + keywordScore + exactSaltLampScore + colorLedScore + tariffScore);
+  const relevanceLabel = relevanceScore >= 82 ? "High" : relevanceScore >= 54 ? "Medium" : "Related";
 
   return {
-    confidence,
+    relevanceScore,
+    relevanceLabel,
+    legalIssue: isClassification ? "Tariff classification" : isCountry ? "Country of origin" : "Related customs issue",
+    issueGroup: isClassification ? "Classification precedents" : "Related rulings",
     matchedKeywords,
   };
 }
@@ -555,7 +698,7 @@ async function retrievePublicCbpPrecedents(profile) {
     }
   }
 
-  const rulings = Array.from(seen.values()).slice(0, 5);
+  const rulings = Array.from(seen.values()).slice(0, 10);
   const results = [];
 
   for (const [index, ruling] of rulings.entries()) {
@@ -581,11 +724,14 @@ async function retrievePublicCbpPrecedents(profile) {
       tariffs: ruling.tariffs || [],
       url: `https://rulings.cbp.gov/ruling/${ruling.rulingNumber.toLowerCase()}`,
       content: detailText.slice(0, 900),
-      score: score.confidence,
-      scoreLabel: "Pequod match confidence",
+      score: score.relevanceScore,
+      relevanceLabel: score.relevanceLabel,
+      legalIssue: score.legalIssue,
+      issueGroup: score.issueGroup,
+      scoreLabel: "Precedent relevance",
       scoreBasis: score.matchedKeywords.length > 0
         ? `Matched terms: ${score.matchedKeywords.join(", ")}`
-        : "Based on CBP search rank and available ruling metadata.",
+        : "Based on legal issue, product similarity, and ruling metadata.",
       rerankScore: null,
       metadata: {
         source: "CBP CROSS",
@@ -601,7 +747,10 @@ async function retrievePublicCbpPrecedents(profile) {
     provider: "CBP CROSS public search",
     indexId: null,
     query: profile.query,
-    results,
+    legalTask: profile.legalTask,
+    results: results
+      .sort((first, second) => Number(second.score || 0) - Number(first.score || 0))
+      .slice(0, 6),
     message: results.length > 0
       ? "Public CBP CROSS retrieval completed."
       : "Public CBP CROSS search returned no matching rulings.",

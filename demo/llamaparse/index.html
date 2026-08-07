@@ -53,11 +53,10 @@
         <div class="demo-glow" aria-hidden="true"></div>
         <div>
           <p class="eyebrow"><span></span> Live document ingestion</p>
-          <h1>Customs Document Ingestion Demo</h1>
+          <h1>Trade Classification Intelligence Demo</h1>
           <p>
-            Upload a product information PDF. Pequod sends the real file
-            to a live document parser, preserves the parsed structure, and prepares the output for downstream
-            customs classification analysis.
+            Upload product documentation. Pequod structures classification relevant facts with LlamaParse,
+            retrieves relevant CBP precedent, and surfaces the evidence and information needed for customs analysis.
           </p>
           <div class="demo-trust" aria-label="Demo guarantees">
             <span>PDF only upload</span>
@@ -66,8 +65,8 @@
           </div>
         </div>
         <div class="demo-note">
-          <strong>Phase 1</strong>
-          <span>Live PDF upload, parse submission, completion polling, and markdown output.</span>
+          <strong>Live workflow</strong>
+          <span>Document parsing, product facts, precedent retrieval, and candidate classification analysis.</span>
         </div>
       </section>
 
@@ -150,11 +149,11 @@
               <img id="product-visual-image" alt="Product image from uploaded PDF" />
             </div>
             <div class="product-visual-hs" id="hs-code-results">
-              Parse a PDF to generate a suggested HS code.
+              Parse a PDF to generate a candidate HTSUS classification.
             </div>
           </section>
 
-          <details class="developer-box" open>
+          <details class="developer-box">
             <summary>Developer verification</summary>
             <ul>
               <li>Parser request submitted: <span id="dev-submitted">No</span></li>
@@ -183,14 +182,13 @@
                 <tr>
                   <th>Attribute</th>
                   <th>Extracted value</th>
-                  <th>Source page</th>
-                  <th>Supporting text</th>
                   <th>Status</th>
+                  <th>Source</th>
                 </tr>
               </thead>
               <tbody id="record-table-body">
                 <tr>
-                  <td colspan="5">Upload a PDF to extract document supported product facts.</td>
+                  <td colspan="4">Upload a PDF to extract document supported product facts.</td>
                 </tr>
               </tbody>
             </table>
@@ -201,7 +199,7 @@
           <div class="panel-head">
             <div>
               <span class="micro-label">Attention required</span>
-              <h2>Missing information</h2>
+              <h2>Additional classification inputs required</h2>
             </div>
           </div>
           <ul class="attention-list" id="attention-list">
@@ -214,7 +212,7 @@
         <div class="panel-head">
           <div>
             <span class="micro-label">Customs precedent retrieval</span>
-            <h2 id="retrieval-heading">Generated ruling search profile</h2>
+            <h2 id="retrieval-heading">Tariff classification retrieval profile</h2>
           </div>
           <span class="status-chip idle" id="retrieval-status">Ready</span>
         </div>

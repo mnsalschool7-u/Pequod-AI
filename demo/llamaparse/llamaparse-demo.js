@@ -189,20 +189,20 @@ function updateFromResponse(data) {
   renderProductRecord(data.productRecord);
   renderAttention(data.productRecord);
   renderRetrievalProfile(data.retrievalProfile);
-  renderRetrievalResults(data.customsRetrieval);
+  renderRetrievalResults(data.customsRetrieval, data.productRecord);
   renderHsCodes(data.customsRetrieval);
   renderProductVisual(data);
 }
 
 function resetAnalysisPanels() {
   structuredCount.textContent = "Ready";
-  recordTableBody.innerHTML = `<tr><td colspan="5">Parse the selected PDF to extract document supported product facts.</td></tr>`;
-  attentionList.innerHTML = "<li>Parse the selected PDF to identify missing classification information.</li>";
+  recordTableBody.innerHTML = `<tr><td colspan="4">Parse the selected PDF to extract document supported product facts.</td></tr>`;
+  attentionList.innerHTML = "<li>Parse the selected PDF to identify additional classification inputs.</li>";
   retrievalStatus.textContent = "Ready";
   retrievalStatus.className = "status-chip idle";
-  profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
+  profileList.innerHTML = `<div><dt>Legal task</dt><dd>Waiting for document ingestion.</dd></div>`;
   retrievalResults.textContent = "Public customs ruling search will run after parsing.";
-  hsCodeResults.textContent = "Parse a PDF to generate a suggested HS code.";
+  hsCodeResults.textContent = "Parse a PDF to generate a candidate HTSUS classification.";
   productVisualCard.hidden = true;
   productVisualImage.removeAttribute("src");
 }
@@ -233,20 +233,20 @@ function escapeHtml(value = "") {
 
 function formatValue(value) {
   if (Array.isArray(value)) {
-    return value.length > 0 ? value.join(", ") : "Not stated";
+    return value.length > 0 ? value.join(", ") : "";
   }
 
-  return value || "Not stated";
+  return value || "";
 }
 
 function renderProductRecord(record) {
   const fields = Array.isArray(record?.fields) ? record.fields : [];
-  const extractedCount = fields.filter((field) => field.status === "Extracted").length;
+  const extractedCount = fields.filter((field) => field.status === "Found").length;
 
   structuredCount.textContent = fields.length > 0 ? `${extractedCount} fields` : "No fields";
 
   if (fields.length === 0) {
-    recordTableBody.innerHTML = `<tr><td colspan="5">No structured fields were returned.</td></tr>`;
+    recordTableBody.innerHTML = `<tr><td colspan="4">No structured fields were returned.</td></tr>`;
     return;
   }
 
@@ -254,10 +254,16 @@ function renderProductRecord(record) {
     .map((field) => `
       <tr>
         <td>${escapeHtml(field.label)}</td>
-        <td>${escapeHtml(formatValue(field.value))}</td>
-        <td>${escapeHtml(field.sourcePage || "Not available")}</td>
-        <td>${escapeHtml(field.supportingText || "Not stated in document")}</td>
+        <td>${escapeHtml(formatValue(field.value) || "Missing")}</td>
         <td><span class="table-status ${escapeHtml(field.status.toLowerCase())}">${escapeHtml(field.status)}</span></td>
+        <td>
+          ${field.sourcePage ? `
+            <details class="source-details">
+              <summary>Page ${escapeHtml(field.sourcePage)}</summary>
+              <p>${escapeHtml(field.supportingText || "Source text unavailable")}</p>
+            </details>
+          ` : "None"}
+        </td>
       </tr>
     `)
     .join("");
@@ -266,46 +272,53 @@ function renderProductRecord(record) {
 function renderAttention(record) {
   const missing = new Set(record?.missing_information || []);
   const flags = [
-    ["Intended use", "Missing intended use"],
-    ["Country of origin", "Missing country of origin"],
-    ["Primary material", "Missing material composition"],
-    ["Components", "Missing component breakdown"],
-    ["Voltage", "Missing electrical specifications"],
-    ["Wattage", "Missing electrical specifications"],
-    ["Dimensions", "Missing dimensions"],
-    ["Weight", "Missing component values"],
+    ["Components", "Component breakdown"],
+    ["Wattage", "Detailed electrical specifications"],
+    ["Dimensions", "Dimensions"],
+    ["Secondary materials", "Material composition"],
+    ["Intended use", "Principal use evidence"],
+    ["Base material", "Assembly information"],
   ];
   const applicable = Array.from(new Set(flags.filter(([field]) => missing.has(field)).map(([, label]) => label)));
 
   attentionList.innerHTML = applicable.length > 0
     ? applicable.map((flag) => `<li>${escapeHtml(flag)}</li>`).join("")
-    : "<li>No missing classification fields were detected from the configured checklist.</li>";
+    : "<li>No additional classification inputs were flagged by the configured checklist.</li>";
 }
 
 function renderRetrievalProfile(profile) {
   if (!profile) {
-    profileList.innerHTML = `<div><dt>Product class</dt><dd>Waiting for document ingestion.</dd></div>`;
+    profileList.innerHTML = `<div><dt>Legal task</dt><dd>Waiting for document ingestion.</dd></div>`;
     return;
   }
 
   const rows = [
+    ["Legal task", profile.legalTask],
     ["Product class", profile.productClass],
-    ["Principal function", profile.principalFunction],
+    ["Product concepts", profile.classificationKeywords],
     ["Primary material", profile.primaryMaterial],
-    ["Secondary materials", profile.secondaryMaterials],
-    ["Electrical components", profile.electricalComponents],
+    ["Electrical function", profile.electricalComponents],
     ["Intended use", profile.intendedUse],
-    ["Country of origin", profile.countryOfOrigin],
-    ["Classification keywords", profile.classificationKeywords],
-    ["Retrieval query", profile.query],
+    ["Origin", profile.countryOfOrigin],
+    ["Retrieval", "CBP CROSS. Classification rulings prioritized."],
   ];
 
   profileList.innerHTML = rows
     .map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(formatValue(value))}</dd></div>`)
-    .join("");
+    .join("") + `
+      <div>
+        <dt>Raw retrieval query</dt>
+        <dd>
+          <details class="source-details">
+            <summary>View query</summary>
+            <p>${escapeHtml(profile.query || "")}</p>
+          </details>
+        </dd>
+      </div>
+    `;
 }
 
-function getConfidenceScore(value) {
+function getRelevanceScore(value) {
   const score = Number(value);
 
   return Number.isFinite(score) ? score : -1;
@@ -318,18 +331,64 @@ function getRankedRetrievalResults(retrieval) {
     .map((result, index) => ({
       ...result,
       originalIndex: index,
-      confidenceScore: getConfidenceScore(result.score),
+      relevanceScore: getRelevanceScore(result.score),
     }))
     .sort((first, second) => {
-      if (second.confidenceScore !== first.confidenceScore) {
-        return second.confidenceScore - first.confidenceScore;
+      if (second.relevanceScore !== first.relevanceScore) {
+        return second.relevanceScore - first.relevanceScore;
       }
 
       return first.originalIndex - second.originalIndex;
     });
 }
 
-function renderRetrievalResults(retrieval) {
+function getClassificationResults(results = []) {
+  return results.filter((result) => result.issueGroup === "Classification precedents" || /classification|tariff/i.test(result.legalIssue || result.categories || ""));
+}
+
+function getRelatedResults(results = []) {
+  return results.filter((result) => !getClassificationResults([result]).length);
+}
+
+function renderPrecedentComparison(result, record = {}) {
+  const content = `${result?.title || ""} ${result?.content || ""}`.toLowerCase();
+  const rows = [
+    ["Salt body", record.primary_material, /salt/i.test(content) ? "Natural salt block or salt lamp" : null, /salt/i.test(content) ? "Match" : "Unclear"],
+    ["Lighting", record.light_source, /color.?changing.*led|led.*color.?changing/i.test(content) ? "Color changing LED" : /\bled\b/i.test(content) ? "LED lighting" : null, /\bled\b/i.test(content) ? "Match" : "Unclear"],
+    ["Power", record.power_source || record.voltage, /\busb\b/i.test(content) ? "USB or electrical" : /electric|powered|bulb/i.test(content) ? "Electrical" : null, /usb|electric|powered|bulb/i.test(content) ? "Partial" : "Unclear"],
+    ["Base", record.base_material, /plastic base/i.test(content) ? "Plastic base" : /base/i.test(content) ? "Base described" : null, /base/i.test(content) ? "Review" : "Unclear"],
+    ["Origin", record.country_of_origin, /china/i.test(content) ? "China" : null, /china/i.test(content) ? "Different or not controlling" : "Unclear"],
+  ];
+
+  return `
+    <details class="precedent-comparison">
+      <summary>View precedent comparison</summary>
+      <table>
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Uploaded product</th>
+            <th>CBP precedent</th>
+            <th>Relation</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(([attribute, product, precedent, relation]) => `
+            <tr>
+              <td>${escapeHtml(attribute)}</td>
+              <td>${escapeHtml(formatValue(product) || "Missing")}</td>
+              <td>${escapeHtml(precedent || "Not clear")}</td>
+              <td>${escapeHtml(relation)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+      <p>Potentially relevant precedent. Requires human classification review.</p>
+    </details>
+  `;
+}
+
+function renderRetrievalResults(retrieval, record = {}) {
   if (!retrieval?.connected) {
     retrievalStatus.textContent = "Unavailable";
     retrievalStatus.className = "status-chip idle";
@@ -347,22 +406,39 @@ function renderRetrievalResults(retrieval) {
     return;
   }
 
-  retrievalResults.innerHTML = rankedResults
-    .map((result, index) => `
+  const classificationResults = getClassificationResults(rankedResults);
+  const relatedResults = getRelatedResults(rankedResults);
+  const renderCard = (result, index, includeComparison = false) => `
       <article class="retrieval-card">
         <span>Rank ${index + 1} | ${escapeHtml(result.rulingNumber || `Result ${index + 1}`)}</span>
         <h4>${escapeHtml(result.title || `Result ${index + 1}`)}</h4>
         <p>${escapeHtml(result.content)}</p>
         <small>
-          ${escapeHtml(result.scoreLabel || "Score")}: ${escapeHtml(result.score ?? "Not available")}
+          Legal issue: ${escapeHtml(result.legalIssue || "Related customs issue")}
+          | Precedent relevance: ${escapeHtml(result.relevanceLabel || "Related")}
           ${result.rulingDate ? ` | Date: ${escapeHtml(result.rulingDate.slice(0, 10))}` : ""}
           ${Array.isArray(result.tariffs) && result.tariffs.length > 0 ? ` | HTSUS noted: ${escapeHtml(result.tariffs.join(", "))}` : ""}
         </small>
         <small>${escapeHtml(result.scoreBasis || "")}</small>
         ${result.url ? `<a href="${escapeHtml(result.url)}" target="_blank" rel="noreferrer">Open CBP ruling</a>` : ""}
+        ${includeComparison ? renderPrecedentComparison(result, record) : ""}
       </article>
-    `)
-    .join("");
+    `;
+
+  retrievalResults.innerHTML = `
+    ${classificationResults.length > 0 ? `
+      <div class="retrieval-group">
+        <h4>Classification precedents</h4>
+        ${classificationResults.map((result, index) => renderCard(result, index, index === 0)).join("")}
+      </div>
+    ` : ""}
+    ${relatedResults.length > 0 ? `
+      <div class="retrieval-group">
+        <h4>Related rulings</h4>
+        ${relatedResults.map((result, index) => renderCard(result, index)).join("")}
+      </div>
+    ` : ""}
+  `;
 }
 
 function collectHsCodes(retrieval) {
@@ -375,7 +451,7 @@ function collectHsCodes(retrieval) {
     tariffs.forEach((code) => {
       const normalizedCode = `${code}`.trim();
 
-      if (!normalizedCode) {
+      if (!normalizedCode || /^99/i.test(normalizedCode)) {
         return;
       }
 
@@ -390,6 +466,7 @@ function collectHsCodes(retrieval) {
         rulingNumber: result.rulingNumber || "Not available",
         title: result.title || "Retrieved customs ruling",
         score: result.score ?? "Not available",
+        relevanceLabel: result.relevanceLabel || "Related",
         numericScore: Number(result.score) || 0,
         resultIndex,
         url: result.url || "",
@@ -438,7 +515,7 @@ function renderHsCodes(retrieval) {
   }
 
   if (codes.length === 0) {
-    hsCodeResults.textContent = "No HS code could be generated for this product.";
+    hsCodeResults.textContent = "No candidate HTSUS classification could be generated for this product.";
     return;
   }
 
@@ -448,15 +525,15 @@ function renderHsCodes(retrieval) {
 
   hsCodeResults.innerHTML = `
     <article class="hs-code-card hs-code-card-primary">
-      <span>Rank 1 | Product HS code</span>
+      <span>Rank 1 | Candidate HTSUS Classification</span>
       <strong>${escapeHtml(suggested.code)}</strong>
-      <p>Confidence: ${escapeHtml(suggested.bestSource?.score ?? "Not available")}. Review before filing.</p>
-      <span>Supporting CBP evidence</span>
+      <p>Supported by retrieved CBP precedent. Review required before filing.</p>
+      <span>Supporting precedent</span>
       <ul>
         ${suggested.sources.map((source) => `
           <li>
             ${source.url ? `<a href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">${escapeHtml(source.rulingNumber)}</a>` : escapeHtml(source.rulingNumber)}
-            <small>${escapeHtml(source.title)} | Confidence: ${escapeHtml(source.score)}</small>
+            <small>${escapeHtml(source.title)} | Legal issue: Tariff classification</small>
           </li>
         `).join("")}
       </ul>
@@ -466,7 +543,7 @@ function renderHsCodes(retrieval) {
             <div>
               <span>Rank ${index + 2}</span>
               <strong>${escapeHtml(item.code)}</strong>
-              <small>Confidence: ${escapeHtml(item.bestSource?.score ?? "Not available")}</small>
+              <small>Precedent relevance: ${escapeHtml(item.bestSource?.relevanceLabel || "Related")}</small>
             </div>
           `).join("")}
         </div>
