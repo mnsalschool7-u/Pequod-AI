@@ -401,13 +401,14 @@ function extractProductRecord(pages) {
     country_of_origin: findPageEvidence(pages, [/country of origin/i, /made in/i, /origin/i]),
   };
 
-  const labeledProductName = findLabeledLineValue(lines, ["Product name", "Item name", "Product type"]);
+  const labeledProductName = findLabeledLineValue(lines, ["Product name", "Item name"]);
+  const productTypeName = findLabeledLineValue(lines, ["Product type"]);
   const titleProductName = findFirstLineValue(lines, [
     /^([A-Za-z0-9][A-Za-z0-9 &,'()/-]{2,90}\blamp\b)$/i,
     /^([A-Za-z0-9][A-Za-z0-9 &,'()/-]{2,90}\bsalt\b[A-Za-z0-9 &,'()/-]{0,60})$/i,
   ]);
-  const productName = labeledProductName.value || titleProductName.value || null;
-  const productNameEvidence = labeledProductName.evidence || titleProductName.evidence || evidence.product_name;
+  const productName = labeledProductName.value || titleProductName.value || productTypeName.value || null;
+  const productNameEvidence = labeledProductName.evidence || titleProductName.evidence || productTypeName.evidence || evidence.product_name;
 
   const components = uniqueValues([
     /natural salt|salt crystal|himalayan/i.test(text) ? "Natural salt body" : "",
@@ -454,13 +455,24 @@ function extractProductRecord(pages) {
   const dimensions = dimensionsResult.value || null;
   const weight = weightResult.value ? normalizeFieldValue(weightResult.value) : null;
   const country = countryResult.value || null;
-  const intendedUseEvidence = findLineEvidence(lines, [/Perfect For/i, /ambient lighting/i, /bedroom/i, /meditation/i, /desk/i, /home decor/i]);
-  const intendedUse = intendedUseEvidence
-    ? uniqueValues(lines
+  const perfectForIndex = lines.findIndex((line) => /^Perfect For:?$/i.test(line.text) || /^Perfect For:/i.test(line.text));
+  const intendedUseLines = perfectForIndex >= 0
+    ? lines
+      .slice(perfectForIndex + 1)
+      .filter((line) => !/please note|product details|company|origin|weight|size|power|light source|material/i.test(line.text))
       .filter((line) => /bedroom|night light|desk|office|meditation|yoga|ambient lighting|decor|gift/i.test(line.text))
-      .map((line) => normalizeFieldValue(line.text.replace(/^Perfect For:?/i, ""))))
       .slice(0, 5)
-      .join("; ")
+    : lines
+      .filter((line) => /^\*?\s*(Relaxing Ambient Light|Stylish Home Decor|Perfect Gift Choice)/i.test(line.text))
+      .slice(0, 4);
+  const intendedUseEvidence = intendedUseLines[0]
+    ? {
+      page: intendedUseLines[0].page,
+      excerpt: intendedUseLines.map((line) => line.text).join(" ").slice(0, 220),
+    }
+    : findLineEvidence(lines, [/Perfect For/i, /ambient lighting/i, /bedroom/i, /meditation/i, /desk/i, /home decor/i]);
+  const intendedUse = intendedUseLines.length > 0
+    ? uniqueValues(intendedUseLines.map((line) => normalizeFieldValue(line.text.replace(/^Perfect For:?/i, "")))).join("; ")
     : null;
   const descriptionEvidence = findLineEvidence(lines, [/Create a warm/i, /Made from/i, /This lamp/i]);
   const description = findFirstMatch(markdown, [/description\s*[:|]\s*([^\n\r]+)/i]) ||
