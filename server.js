@@ -491,7 +491,7 @@ function extractProductRecord(pages) {
   return {
     document_type: documentType,
     product_name: productName,
-    model_number: model,
+    model_number: modelResult.value,
     product_description: description,
     primary_material: primaryMaterial,
     secondary_materials: secondaryMaterials,
