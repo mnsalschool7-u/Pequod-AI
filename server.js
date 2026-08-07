@@ -694,7 +694,7 @@ function withTimeout(promise, timeoutMs, message) {
 
 async function parsePdfWithLlamaParse(filePath, options = {}) {
   if (!process.env.LLAMA_CLOUD_API_KEY) {
-    const error = new Error("LLAMA_CLOUD_API_KEY is not configured on the server.");
+    const error = new Error("Document parser is not configured on the server.");
     error.statusCode = 503;
     throw error;
   }
@@ -1130,7 +1130,7 @@ async function sendPokeNotification(order) {
   return true;
 }
 
-// Allow the static Pequod site to call the separate parser API without exposing credentials.
+// Allow the static Pequod site to call the separate parser service safely.
 app.use((req, res, next) => {
   if (!req.path.startsWith("/api/demo/llamaparse")) {
     return next();

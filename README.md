@@ -27,7 +27,7 @@ PORT=3000
 
 `LLAMA_CLOUD_INDEX_ID` is optional. When it is not set, the demo still parses the uploaded PDF, extracts a structured product record, generates the customs retrieval query, and searches public CBP CROSS rulings.
 
-The demo checks `/api/demo/llamaparse/index-status` to determine whether customs ruling search is available. The browser never receives the LlamaCloud API key. If a LlamaCloud index ID is configured, the index ID is only shown in masked form.
+The demo checks `/api/demo/llamaparse/index-status` to determine whether customs ruling search is available. If a LlamaCloud index ID is configured, the index ID is only shown in masked form.
 
 Optional existing variables are documented in `.env.example`.
 
@@ -56,7 +56,7 @@ It supports the Pequod document workflow:
 
 1. Select or drag and drop a PDF.
 2. Upload the PDF to the Pequod Express server.
-3. Send the document to the real LlamaParse service using `LLAMA_CLOUD_API_KEY`.
+3. Send the document to the real LlamaParse service through the backend.
 4. Wait for the parsing job to complete.
 5. Return and display markdown from LlamaParse.
 6. Extract document supported product facts into a structured record.
@@ -72,7 +72,7 @@ Use a product information PDF that includes details such as product name, photo,
 
 Confirm:
 
-* The server has `LLAMA_CLOUD_API_KEY` set.
+* The live parser connection is configured on the server.
 * The uploaded file is a PDF.
 * The developer verification panel shows a real parse job ID.
 * The markdown output changes based on the uploaded document.
@@ -83,8 +83,8 @@ Confirm:
 * If `LLAMA_CLOUD_INDEX_ID` is not configured, retrieval returns real public CBP CROSS results when matches are available.
 * A product HS code is suggested when supporting CBP precedent provides usable tariff code evidence.
 * The product visual card shows a cropped layout image or embedded image returned by LlamaParse when the PDF contains one.
-* Missing API keys, invalid files, failed jobs, and timeouts show user facing errors.
-* Browser console and server logs do not expose the API key or full document contents.
+* Missing parser configuration, invalid files, failed jobs, and timeouts show user facing errors.
+* Browser console and server logs do not expose sensitive configuration or full document contents.
 
 ## Known limitations
 
