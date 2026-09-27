@@ -89,40 +89,42 @@ function validateField(field) {
   return !message;
 }
 
-requiredFields.forEach((id) => {
-  const field = document.querySelector(`#${id}`);
-  field.addEventListener("blur", () => validateField(field));
-  field.addEventListener("input", () => {
-    if (field.getAttribute("aria-invalid") === "true") validateField(field);
-  });
-  field.addEventListener("change", () => {
-    if (field.getAttribute("aria-invalid") === "true") validateField(field);
-  });
-});
-
-waitlistForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const fields = requiredFields.map((id) => document.querySelector(`#${id}`));
-  const valid = fields.map(validateField).every(Boolean);
-
-  if (!valid) {
-    fields.find((field) => field.getAttribute("aria-invalid") === "true")?.focus();
-    return;
-  }
-
-  waitlistForm.hidden = true;
-  successState.hidden = false;
-  successState.querySelector("h3").focus?.();
-});
-
-resetFormButton.addEventListener("click", () => {
-  waitlistForm.reset();
+if (waitlistForm && successState && resetFormButton) {
   requiredFields.forEach((id) => {
     const field = document.querySelector(`#${id}`);
-    field.removeAttribute("aria-invalid");
-    document.querySelector(`#${id}-error`).textContent = "";
+    field.addEventListener("blur", () => validateField(field));
+    field.addEventListener("input", () => {
+      if (field.getAttribute("aria-invalid") === "true") validateField(field);
+    });
+    field.addEventListener("change", () => {
+      if (field.getAttribute("aria-invalid") === "true") validateField(field);
+    });
   });
-  successState.hidden = true;
-  waitlistForm.hidden = false;
-  document.querySelector("#name").focus();
-});
+
+  waitlistForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const fields = requiredFields.map((id) => document.querySelector(`#${id}`));
+    const valid = fields.map(validateField).every(Boolean);
+
+    if (!valid) {
+      fields.find((field) => field.getAttribute("aria-invalid") === "true")?.focus();
+      return;
+    }
+
+    waitlistForm.hidden = true;
+    successState.hidden = false;
+    successState.querySelector("h3").focus?.();
+  });
+
+  resetFormButton.addEventListener("click", () => {
+    waitlistForm.reset();
+    requiredFields.forEach((id) => {
+      const field = document.querySelector(`#${id}`);
+      field.removeAttribute("aria-invalid");
+      document.querySelector(`#${id}-error`).textContent = "";
+    });
+    successState.hidden = true;
+    waitlistForm.hidden = false;
+    document.querySelector("#name").focus();
+  });
+}
