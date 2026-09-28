@@ -962,26 +962,18 @@ button:focus-visible {
 
 .team-hero {
   position: relative;
-  min-height: 560px;
-  padding: 165px 0 96px;
+  min-height: 690px;
+  padding: 165px 0 110px;
   overflow: hidden;
-}
-
-.team-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.18;
-  background-image:
-    linear-gradient(rgba(122, 178, 208, 0.14) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(122, 178, 208, 0.14) 1px, transparent 1px);
-  background-size: 68px 68px;
 }
 
 .team-hero-inner {
   position: relative;
   z-index: 1;
-  display: block;
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  gap: 74px;
+  align-items: center;
 }
 
 .team-hero h1 {
@@ -997,6 +989,53 @@ button:focus-visible {
   line-height: 1.85;
 }
 
+.team-focus-panel {
+  overflow: hidden;
+  border: 1px solid rgba(150, 190, 210, 0.16);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
+  box-shadow: 0 26px 100px rgba(0, 0, 0, 0.22);
+}
+
+.team-focus-body {
+  padding: 34px;
+}
+
+.team-focus-body small {
+  display: block;
+  color: var(--blue-bright);
+  font-family: "DM Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.team-focus-body h2 {
+  margin: 16px 0 0;
+  color: white;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+}
+
+.team-focus-body ul {
+  display: grid;
+  gap: 10px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-focus-body li {
+  padding: 14px 16px;
+  border: 1px solid rgba(150, 190, 210, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #9fb8c5;
+  font-size: 12px;
+}
+
 .advisor-card small {
   display: block;
   color: var(--blue-bright);
@@ -1010,6 +1049,10 @@ button:focus-visible {
   padding: 105px 0;
   background: var(--paper);
   color: var(--ink);
+}
+
+.team-principles {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .team-section-copy {
