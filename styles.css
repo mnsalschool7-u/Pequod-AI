@@ -823,6 +823,69 @@ button:focus-visible {
   object-fit: cover;
 }
 
+.login-page {
+  background: var(--navy-950);
+}
+
+.login-page .site-header {
+  position: fixed;
+  background: rgba(6, 18, 30, 0.92);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.login-section {
+  position: relative;
+  min-height: 100vh;
+  padding: 155px 0 105px;
+  overflow: hidden;
+}
+
+.login-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.login-copy h1 {
+  margin: 16px 0 0;
+  color: white;
+  font-size: clamp(64px, 9vw, 118px);
+  font-weight: 500;
+  letter-spacing: -0.075em;
+  line-height: 0.94;
+}
+
+.login-copy p {
+  max-width: 520px;
+  margin: 28px 0 0;
+  color: #a3b9c5;
+  font-size: 17px;
+  line-height: 1.85;
+}
+
+.login-card {
+  max-width: 520px;
+  width: 100%;
+  padding: 38px;
+  border: 1px solid rgba(150, 190, 210, 0.16);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 26px 100px rgba(0, 0, 0, 0.22);
+}
+
+.login-note {
+  margin: 16px 0 0;
+  color: #718087;
+  font-size: 11px;
+  line-height: 1.7;
+  text-align: center;
+}
+
 .early-access-section {
   background: var(--paper);
 }
@@ -1320,6 +1383,7 @@ button:focus-visible {
   .story-shell,
   .early-access-shell,
   .team-photo-shell,
+  .login-shell,
   .team-hero-inner,
   .team-section-grid {
     grid-template-columns: 1fr;
@@ -1529,6 +1593,16 @@ button:focus-visible {
 
   .team-photo-card img {
     border-radius: 16px;
+  }
+
+  .login-section {
+    min-height: 0;
+    padding: 112px 0 78px;
+  }
+
+  .login-card {
+    max-width: none;
+    padding: 24px;
   }
 
   .advisor-card {
