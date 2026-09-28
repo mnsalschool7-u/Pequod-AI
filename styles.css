@@ -96,8 +96,7 @@ a {
   transition: background 0.25s ease, box-shadow 0.25s ease;
 }
 
-.site-header.is-scrolled,
-.team-page .site-header {
+.site-header.is-scrolled {
   position: fixed;
   background: rgba(6, 18, 30, 0.92);
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
@@ -545,19 +544,14 @@ button:focus-visible {
 .split-layout,
 .tech-layout,
 .story-shell,
-.early-access-shell,
-.team-hero-inner,
-.team-section-grid {
+.early-access-shell {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   gap: 86px;
   align-items: start;
 }
 
-.section-heading h2,
-.team-hero h1,
-.team-section h2,
-.advisors-head h2 {
+.section-heading h2 {
   margin: 16px 0 0;
   color: inherit;
   font-size: clamp(42px, 5vw, 70px);
@@ -569,9 +563,7 @@ button:focus-visible {
 .problem-section .section-heading h2,
 .workflow-section .section-heading h2,
 .technology-section .section-heading h2,
-.early-access-copy h2,
-.team-section h2,
-.advisors-head h2 {
+.early-access-copy h2 {
   color: #102b3b;
 }
 
@@ -583,9 +575,7 @@ button:focus-visible {
 .stacked-copy p,
 .story-copy p,
 .tech-card p,
-.early-access-copy p,
-.team-section-copy p,
-.advisors-head p {
+.early-access-copy p {
   margin: 0;
   color: #61747e;
   font-size: 15px;
@@ -663,8 +653,7 @@ button:focus-visible {
 }
 
 .issue-grid,
-.workflow-grid,
-.team-principles {
+.workflow-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
@@ -672,8 +661,7 @@ button:focus-visible {
 }
 
 .issue-grid article,
-.workflow-grid article,
-.team-principles article {
+.workflow-grid article {
   min-height: 260px;
   padding: 28px;
   border-radius: 14px;
@@ -684,23 +672,20 @@ button:focus-visible {
   background: rgba(255, 255, 255, 0.03);
 }
 
-.workflow-grid article,
-.team-principles article {
+.workflow-grid article {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.64);
 }
 
 .issue-grid span,
-.workflow-grid span,
-.team-principles span {
+.workflow-grid span {
   color: var(--blue);
   font-family: "DM Mono", monospace;
   font-size: 10px;
 }
 
 .issue-grid h3,
-.workflow-grid h3,
-.team-principles h3 {
+.workflow-grid h3 {
   margin: 42px 0 13px;
   font-size: 21px;
   line-height: 1.24;
@@ -713,8 +698,7 @@ button:focus-visible {
 }
 
 .issue-grid p,
-.workflow-grid p,
-.team-principles p {
+.workflow-grid p {
   margin: 0;
   color: #718087;
   font-size: 12px;
@@ -845,37 +829,40 @@ button:focus-visible {
 .login-shell {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 0.95fr 1.05fr;
-  gap: 80px;
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
-.login-copy h1 {
+.login-card h1 {
   margin: 16px 0 0;
-  color: white;
-  font-size: clamp(64px, 9vw, 118px);
+  color: #102b3b;
+  font-size: clamp(48px, 7vw, 84px);
   font-weight: 500;
   letter-spacing: -0.075em;
   line-height: 0.94;
 }
 
-.login-copy p {
+.login-card p {
   max-width: 520px;
-  margin: 28px 0 0;
-  color: #a3b9c5;
-  font-size: 17px;
-  line-height: 1.85;
+  margin: 18px 0 0;
+  color: #61747e;
+  font-size: 14px;
+  line-height: 1.75;
 }
 
 .login-card {
   max-width: 520px;
   width: 100%;
-  padding: 38px;
+  padding: 42px;
   border: 1px solid rgba(150, 190, 210, 0.16);
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 26px 100px rgba(0, 0, 0, 0.22);
+}
+
+.login-card form {
+  margin-top: 30px;
 }
 
 .login-note {
@@ -1047,284 +1034,6 @@ button:focus-visible {
   text-decoration: underline;
 }
 
-.team-page {
-  background: var(--navy-950);
-  color: white;
-}
-
-.team-simple-section {
-  position: relative;
-  min-height: 100vh;
-  padding: 150px 0 110px;
-  overflow: hidden;
-}
-
-.team-simple-shell {
-  position: relative;
-  z-index: 1;
-}
-
-.team-simple-heading {
-  max-width: 760px;
-  margin-bottom: 56px;
-}
-
-.team-simple-heading h1 {
-  margin: 16px 0 0;
-  color: white;
-  font-size: clamp(64px, 10vw, 132px);
-  font-weight: 500;
-  letter-spacing: -0.075em;
-  line-height: 0.94;
-}
-
-.team-simple-card {
-  max-width: 430px;
-  padding: 18px 18px 28px;
-  border: 1px solid rgba(150, 190, 210, 0.16);
-  border-radius: 24px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
-  box-shadow: 0 26px 100px rgba(0, 0, 0, 0.22);
-}
-
-.team-simple-photo {
-  overflow: hidden;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.team-simple-photo img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-}
-
-.team-simple-card small {
-  display: block;
-  margin: 24px 10px 0;
-  color: var(--blue-bright);
-  font-family: "DM Mono", monospace;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.team-simple-card h2 {
-  margin: 8px 10px 0;
-  color: white;
-  font-size: 36px;
-  font-weight: 600;
-  letter-spacing: -0.045em;
-  line-height: 1.05;
-}
-
-.team-hero {
-  position: relative;
-  min-height: 690px;
-  padding: 165px 0 110px;
-  overflow: hidden;
-}
-
-.team-hero-inner {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 0.92fr 1.08fr;
-  gap: 74px;
-  align-items: center;
-}
-
-.team-hero h1 {
-  max-width: 860px;
-  color: white;
-}
-
-.team-hero p {
-  max-width: 680px;
-  margin: 28px 0 0;
-  color: #a3b9c5;
-  font-size: 17px;
-  line-height: 1.85;
-}
-
-.team-visual {
-  position: relative;
-  min-height: 430px;
-  border: 1px solid rgba(150, 190, 210, 0.16);
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 50% 42%, rgba(120, 184, 220, 0.22), transparent 38%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
-  box-shadow: 0 26px 100px rgba(0, 0, 0, 0.22);
-  overflow: hidden;
-}
-
-.team-visual::before {
-  content: "";
-  position: absolute;
-  inset: 34px;
-  border: 1px solid rgba(120, 184, 220, 0.12);
-  border-radius: 50%;
-}
-
-.team-logo-orb {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  display: grid;
-  width: 190px;
-  height: 190px;
-  place-items: center;
-  border: 1px solid rgba(120, 184, 220, 0.18);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.055);
-  transform: translate(-50%, -50%);
-}
-
-.team-logo-orb img {
-  width: 128px;
-  height: 112px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 22px rgba(120, 184, 220, 0.28));
-}
-
-.team-visual-card {
-  position: absolute;
-  min-width: 170px;
-  padding: 16px;
-  border: 1px solid rgba(150, 190, 210, 0.16);
-  border-radius: 16px;
-  background: rgba(6, 18, 30, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.team-visual-card-one {
-  top: 44px;
-  left: 44px;
-}
-
-.team-visual-card-two {
-  right: 42px;
-  top: 154px;
-}
-
-.team-visual-card-three {
-  left: 78px;
-  bottom: 44px;
-}
-
-.team-visual-card span {
-  color: var(--blue-bright);
-  font-family: "DM Mono", monospace;
-  font-size: 9px;
-}
-
-.team-visual-card strong {
-  display: block;
-  margin-top: 8px;
-  color: white;
-  font-size: 13px;
-}
-
-.advisor-card small {
-  display: block;
-  color: var(--blue-bright);
-  font-family: "DM Mono", monospace;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.team-section {
-  padding: 105px 0;
-  background: var(--paper);
-  color: var(--ink);
-}
-
-.team-principles {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.team-section-copy {
-  display: grid;
-  gap: 14px;
-}
-
-.advisors-section {
-  margin-top: 88px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: white;
-  box-shadow: 0 22px 70px rgba(5, 23, 36, 0.08);
-  overflow: hidden;
-}
-
-.advisors-head {
-  display: grid;
-  grid-template-columns: 0.8fr 1fr;
-  gap: 48px;
-  align-items: end;
-  padding: 44px 44px 0;
-  margin-bottom: 34px;
-}
-
-.advisor-card {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  align-items: center;
-  gap: 42px;
-  max-width: none;
-  padding: 0 44px 44px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-}
-
-.advisor-card img {
-  width: 320px;
-  height: 320px;
-  flex: none;
-  border-radius: 22px;
-  object-fit: cover;
-  box-shadow: 0 18px 42px rgba(6, 30, 44, 0.12);
-}
-
-.advisor-card small {
-  color: var(--blue);
-}
-
-.advisor-card h3 {
-  margin: 8px 0 0;
-  color: #122f40;
-  font-size: 34px;
-  letter-spacing: -0.045em;
-  line-height: 1.1;
-}
-
-.advisor-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.advisor-tags span {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  padding: 0 13px;
-  border: 1px solid #d6e0e2;
-  border-radius: 999px;
-  background: #f7faf9;
-  color: #4e6876;
-  font-family: "DM Mono", monospace;
-  font-size: 9px;
-  text-transform: uppercase;
-}
-
 .site-footer {
   padding: 62px 0 24px;
   background: #06131f;
@@ -1383,9 +1092,7 @@ button:focus-visible {
   .story-shell,
   .early-access-shell,
   .team-photo-shell,
-  .login-shell,
-  .team-hero-inner,
-  .team-section-grid {
+  .login-shell {
     grid-template-columns: 1fr;
     gap: 46px;
   }
@@ -1433,18 +1140,6 @@ button:focus-visible {
     max-width: 620px;
   }
 
-  .team-visual {
-    max-width: 620px;
-  }
-
-  .team-principles {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .advisors-head {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
 }
 
 @media (max-width: 570px) {
@@ -1469,8 +1164,7 @@ button:focus-visible {
     letter-spacing: -0.065em;
   }
 
-  .hero-lede,
-  .team-hero p {
+  .hero-lede {
     font-size: 15px;
   }
 
@@ -1487,7 +1181,6 @@ button:focus-visible {
   .form-row,
   .issue-grid,
   .workflow-grid,
-  .team-principles,
   .consequence-chain {
     grid-template-columns: 1fr;
   }
@@ -1507,15 +1200,12 @@ button:focus-visible {
   .early-access-section,
   .solution-section,
   .story-section,
-  .why-now-section,
-  .team-section {
+  .why-now-section {
     padding: 78px 0;
   }
 
   .section-heading h2,
-  .early-access-copy h2,
-  .team-section h2,
-  .advisors-head h2 {
+  .early-access-copy h2 {
     font-size: 40px;
   }
 
@@ -1525,61 +1215,9 @@ button:focus-visible {
     padding: 24px;
   }
 
-  .team-visual {
-    min-height: 390px;
-  }
-
-  .team-logo-orb {
-    width: 150px;
-    height: 150px;
-  }
-
-  .team-logo-orb img {
-    width: 104px;
-    height: 92px;
-  }
-
-  .team-visual-card {
-    min-width: 138px;
-    padding: 13px;
-  }
-
-  .team-visual-card-one {
-    top: 24px;
-    left: 20px;
-  }
-
-  .team-visual-card-two {
-    right: 20px;
-    top: 132px;
-  }
-
-  .team-visual-card-three {
-    left: 28px;
-    bottom: 24px;
-  }
-
   .story-copy blockquote {
     padding: 22px;
     font-size: 20px;
-  }
-
-  .team-hero {
-    min-height: 0;
-    padding: 112px 0 78px;
-  }
-
-  .team-simple-section {
-    min-height: 0;
-    padding: 112px 0 78px;
-  }
-
-  .team-simple-heading {
-    margin-bottom: 34px;
-  }
-
-  .team-simple-card {
-    max-width: 100%;
   }
 
   .team-photo-section {
@@ -1603,23 +1241,6 @@ button:focus-visible {
   .login-card {
     max-width: none;
     padding: 24px;
-  }
-
-  .advisor-card {
-    display: block;
-    padding: 0 24px 24px;
-  }
-
-  .advisor-card img {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    aspect-ratio: 1;
-    margin-bottom: 18px;
-  }
-
-  .advisors-head {
-    padding: 24px 24px 0;
   }
 
   .footer-main {
