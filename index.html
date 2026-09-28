@@ -36,7 +36,6 @@
           <a href="#technology">Technology</a>
         </nav>
 
-        <a class="button button-small button-light nav-cta" href="#early-access">Request access</a>
         <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
           <span></span><span></span>
         </button>
@@ -46,7 +45,6 @@
         <a href="#how-it-works">How it works</a>
         <a href="#founder-story">Founder story</a>
         <a href="#technology">Technology</a>
-        <a href="#early-access">Request access</a>
       </nav>
     </header>
 
@@ -64,11 +62,11 @@
               issues before they compound into delays, fees, and trapped inventory.
             </p>
             <div class="hero-actions">
-              <a class="button button-primary" href="#early-access">
-                Request Early Access
+              <a class="button button-primary" href="#how-it-works">
+                See How It Works
                 <span aria-hidden="true">→</span>
               </a>
-              <a class="button button-ghost" href="#how-it-works">See How It Works</a>
+              <a class="button button-ghost" href="/demo/llamaparse/">View Demo</a>
             </div>
             <div class="hero-trust" aria-label="Pequod focus areas">
               <span>Customs clearance</span>
@@ -313,71 +311,6 @@
         </div>
       </section>
 
-      <!-- Early access form -->
-      <section class="early-access-section" id="early-access">
-        <div class="container early-access-shell">
-          <div class="early-access-copy reveal">
-            <div class="eyebrow eyebrow-blue"><span></span> Early access</div>
-            <h2>Resolve shipment exceptions faster.</h2>
-            <p>
-              Pequod AI is a TradeTech platform that uses AI to identify customs, classification, tariff, and documentation
-              issues and help businesses resolve shipment exceptions faster.
-            </p>
-          </div>
-
-          <div class="form-card reveal">
-            <form id="early-access-form" novalidate>
-              <div class="form-row">
-                <div class="form-field">
-                  <label for="name">Name</label>
-                  <input id="name" name="name" type="text" autocomplete="name" placeholder="Your full name" required />
-                  <span class="field-error" id="name-error"></span>
-                </div>
-                <div class="form-field">
-                  <label for="email">Work email</label>
-                  <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required />
-                  <span class="field-error" id="email-error"></span>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-field">
-                  <label for="company">Company</label>
-                  <input id="company" name="company" type="text" autocomplete="organization" placeholder="Company name" required />
-                  <span class="field-error" id="company-error"></span>
-                </div>
-                <div class="form-field">
-                  <label for="role">Role</label>
-                  <select id="role" name="role" required>
-                    <option value="">Select your role</option>
-                    <option>Importer</option>
-                    <option>Exporter</option>
-                    <option>Customs Broker</option>
-                    <option>Trade Compliance</option>
-                    <option>Operations</option>
-                    <option>Other</option>
-                  </select>
-                  <span class="field-error" id="role-error"></span>
-                </div>
-              </div>
-              <div class="form-field">
-                <label for="message">What customs or shipment exception are you trying to solve? <small>Optional</small></label>
-                <textarea id="message" name="message" rows="4" placeholder="Tell us what gets stuck, delayed, or hard to classify."></textarea>
-              </div>
-              <button class="button button-primary submit-button" type="submit">
-                Request Early Access
-                <span aria-hidden="true">→</span>
-              </button>
-              <p class="form-note">No spam. Just product updates and early access details.</p>
-            </form>
-            <div class="success-state" id="success-state" role="status" aria-live="polite" hidden>
-              <span aria-hidden="true">✓</span>
-              <h3 tabindex="-1">Request received.</h3>
-              <p>Thanks for reaching out. We will follow up with early access details soon.</p>
-              <button type="button" id="reset-form">Submit another response</button>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
 
     <footer class="site-footer">

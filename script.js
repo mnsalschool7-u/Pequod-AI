@@ -3,9 +3,6 @@ document.documentElement.classList.add("js");
 const header = document.querySelector(".site-header");
 const menuButton = document.querySelector(".menu-button");
 const mobileMenu = document.querySelector(".mobile-menu");
-const earlyAccessForm = document.querySelector("#early-access-form");
-const successState = document.querySelector("#success-state");
-const resetFormButton = document.querySelector("#reset-form");
 
 // Keep the navigation legible as the page moves beneath it.
 function syncHeader() {
@@ -62,69 +59,4 @@ if (reducedMotion || !("IntersectionObserver" in window)) {
   );
 
   revealItems.forEach((item) => revealObserver.observe(item));
-}
-
-// Frontend-only early access validation and confirmation state.
-const requiredFields = ["name", "email", "company", "role"];
-
-function errorFor(field) {
-  const value = field.value.trim();
-
-  if (!value) return `${field.labels[0].textContent} is required.`;
-
-  if (field.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-    return "Enter a valid work email.";
-  }
-
-  return "";
-}
-
-function validateField(field) {
-  const message = errorFor(field);
-  const errorElement = document.querySelector(`#${field.id}-error`);
-
-  field.setAttribute("aria-invalid", String(Boolean(message)));
-  field.setAttribute("aria-describedby", `${field.id}-error`);
-  errorElement.textContent = message;
-  return !message;
-}
-
-if (earlyAccessForm && successState && resetFormButton) {
-  requiredFields.forEach((id) => {
-    const field = document.querySelector(`#${id}`);
-    field.addEventListener("blur", () => validateField(field));
-    field.addEventListener("input", () => {
-      if (field.getAttribute("aria-invalid") === "true") validateField(field);
-    });
-    field.addEventListener("change", () => {
-      if (field.getAttribute("aria-invalid") === "true") validateField(field);
-    });
-  });
-
-  earlyAccessForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const fields = requiredFields.map((id) => document.querySelector(`#${id}`));
-    const valid = fields.map(validateField).every(Boolean);
-
-    if (!valid) {
-      fields.find((field) => field.getAttribute("aria-invalid") === "true")?.focus();
-      return;
-    }
-
-    earlyAccessForm.hidden = true;
-    successState.hidden = false;
-    successState.querySelector("h3").focus?.();
-  });
-
-  resetFormButton.addEventListener("click", () => {
-    earlyAccessForm.reset();
-    requiredFields.forEach((id) => {
-      const field = document.querySelector(`#${id}`);
-      field.removeAttribute("aria-invalid");
-      document.querySelector(`#${id}-error`).textContent = "";
-    });
-    successState.hidden = true;
-    earlyAccessForm.hidden = false;
-    document.querySelector("#name").focus();
-  });
 }
