@@ -971,7 +971,7 @@ button:focus-visible {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 1fr 0.9fr;
+  grid-template-columns: 0.92fr 1.08fr;
   gap: 74px;
   align-items: center;
 }
@@ -989,51 +989,84 @@ button:focus-visible {
   line-height: 1.85;
 }
 
-.team-focus-panel {
-  overflow: hidden;
+.team-visual {
+  position: relative;
+  min-height: 430px;
   border: 1px solid rgba(150, 190, 210, 0.16);
-  border-radius: 22px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(120, 184, 220, 0.22), transparent 38%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
   box-shadow: 0 26px 100px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
 }
 
-.team-focus-body {
-  padding: 34px;
+.team-visual::before {
+  content: "";
+  position: absolute;
+  inset: 34px;
+  border: 1px solid rgba(120, 184, 220, 0.12);
+  border-radius: 50%;
 }
 
-.team-focus-body small {
-  display: block;
+.team-logo-orb {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  width: 190px;
+  height: 190px;
+  place-items: center;
+  border: 1px solid rgba(120, 184, 220, 0.18);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.055);
+  transform: translate(-50%, -50%);
+}
+
+.team-logo-orb img {
+  width: 128px;
+  height: 112px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 22px rgba(120, 184, 220, 0.28));
+}
+
+.team-visual-card {
+  position: absolute;
+  min-width: 170px;
+  padding: 16px;
+  border: 1px solid rgba(150, 190, 210, 0.16);
+  border-radius: 16px;
+  background: rgba(6, 18, 30, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.team-visual-card:nth-of-type(1) {
+  top: 44px;
+  left: 44px;
+}
+
+.team-visual-card:nth-of-type(2) {
+  right: 42px;
+  top: 154px;
+}
+
+.team-visual-card:nth-of-type(3) {
+  left: 78px;
+  bottom: 44px;
+}
+
+.team-visual-card span {
   color: var(--blue-bright);
   font-family: "DM Mono", monospace;
   font-size: 9px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
 }
 
-.team-focus-body h2 {
-  margin: 16px 0 0;
+.team-visual-card strong {
+  display: block;
+  margin-top: 8px;
   color: white;
-  font-size: clamp(28px, 3vw, 40px);
-  font-weight: 500;
-  letter-spacing: -0.05em;
-  line-height: 1.1;
-}
-
-.team-focus-body ul {
-  display: grid;
-  gap: 10px;
-  margin: 28px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.team-focus-body li {
-  padding: 14px 16px;
-  border: 1px solid rgba(150, 190, 210, 0.14);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #9fb8c5;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .advisor-card small {
@@ -1062,11 +1095,12 @@ button:focus-visible {
 
 .advisors-section {
   margin-top: 88px;
-  padding: 44px;
+  padding: 0;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: linear-gradient(145deg, #fff, rgba(236, 243, 245, 0.76));
+  border-radius: 24px;
+  background: white;
   box-shadow: 0 22px 70px rgba(5, 23, 36, 0.08);
+  overflow: hidden;
 }
 
 .advisors-head {
@@ -1074,26 +1108,27 @@ button:focus-visible {
   grid-template-columns: 0.8fr 1fr;
   gap: 48px;
   align-items: end;
+  padding: 44px 44px 0;
   margin-bottom: 34px;
 }
 
 .advisor-card {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 320px 1fr;
   align-items: center;
-  gap: 30px;
-  max-width: 760px;
-  padding: 22px;
-  border: 1px solid #d6e0e2;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.78);
+  gap: 42px;
+  max-width: none;
+  padding: 0 44px 44px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .advisor-card img {
-  width: 180px;
-  height: 180px;
+  width: 320px;
+  height: 320px;
   flex: none;
-  border-radius: 16px;
+  border-radius: 22px;
   object-fit: cover;
   box-shadow: 0 18px 42px rgba(6, 30, 44, 0.12);
 }
@@ -1110,12 +1145,25 @@ button:focus-visible {
   line-height: 1.1;
 }
 
-.advisor-card p {
-  max-width: 420px;
-  margin: 12px 0 0;
-  color: #61747e;
-  font-size: 13px;
-  line-height: 1.75;
+.advisor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.advisor-tags span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 13px;
+  border: 1px solid #d6e0e2;
+  border-radius: 999px;
+  background: #f7faf9;
+  color: #4e6876;
+  font-family: "DM Mono", monospace;
+  font-size: 9px;
+  text-transform: uppercase;
 }
 
 .site-footer {
@@ -1224,6 +1272,10 @@ button:focus-visible {
     max-width: 620px;
   }
 
+  .team-visual {
+    max-width: 620px;
+  }
+
   .team-principles {
     grid-template-columns: 1fr 1fr;
   }
@@ -1308,9 +1360,42 @@ button:focus-visible {
 
   .question-card,
   .tech-card,
-  .form-card,
-  .advisors-section {
+  .form-card {
     padding: 24px;
+  }
+
+  .team-visual {
+    min-height: 390px;
+  }
+
+  .team-logo-orb {
+    width: 150px;
+    height: 150px;
+  }
+
+  .team-logo-orb img {
+    width: 104px;
+    height: 92px;
+  }
+
+  .team-visual-card {
+    min-width: 138px;
+    padding: 13px;
+  }
+
+  .team-visual-card:nth-of-type(1) {
+    top: 24px;
+    left: 20px;
+  }
+
+  .team-visual-card:nth-of-type(2) {
+    right: 20px;
+    top: 132px;
+  }
+
+  .team-visual-card:nth-of-type(3) {
+    left: 28px;
+    bottom: 24px;
   }
 
   .story-copy blockquote {
@@ -1325,14 +1410,19 @@ button:focus-visible {
 
   .advisor-card {
     display: block;
+    padding: 0 24px 24px;
   }
 
   .advisor-card img {
     width: 100%;
     height: auto;
-    max-width: 210px;
+    max-width: 100%;
     aspect-ratio: 1;
     margin-bottom: 18px;
+  }
+
+  .advisors-head {
+    padding: 24px 24px 0;
   }
 
   .footer-main {
