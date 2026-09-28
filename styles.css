@@ -962,8 +962,8 @@ button:focus-visible {
 
 .team-hero {
   position: relative;
-  min-height: 620px;
-  padding: 165px 0 105px;
+  min-height: 560px;
+  padding: 165px 0 96px;
   overflow: hidden;
 }
 
@@ -981,67 +981,22 @@ button:focus-visible {
 .team-hero-inner {
   position: relative;
   z-index: 1;
-  align-items: center;
+  display: block;
 }
 
 .team-hero h1 {
-  max-width: 620px;
+  max-width: 860px;
   color: white;
 }
 
-.team-hero h1 span {
-  display: block;
-  color: var(--blue-bright);
-}
-
 .team-hero p {
-  max-width: 560px;
+  max-width: 680px;
   margin: 28px 0 0;
   color: #a3b9c5;
   font-size: 17px;
   line-height: 1.85;
 }
 
-.team-card {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(150, 190, 210, 0.16);
-  border-radius: 18px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
-}
-
-.team-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 0, rgba(120, 184, 220, 0.28), transparent 54%);
-}
-
-.team-card-inner {
-  position: relative;
-  padding: 42px;
-}
-
-.team-mark {
-  display: grid;
-  width: 92px;
-  height: 92px;
-  place-items: center;
-  margin-bottom: 38px;
-  border: 1px solid rgba(120, 184, 220, 0.25);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.team-mark img {
-  width: 72px;
-  height: 62px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 18px rgba(120, 184, 220, 0.22));
-}
-
-.team-card small,
 .advisor-card small {
   display: block;
   color: var(--blue-bright);
@@ -1049,21 +1004,6 @@ button:focus-visible {
   font-size: 9px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-}
-
-.team-card h2 {
-  margin: 16px 0 14px;
-  color: white;
-  font-size: 31px;
-  line-height: 1.15;
-  letter-spacing: -0.04em;
-}
-
-.team-card p {
-  margin: 0;
-  color: #8fa8b5;
-  font-size: 13px;
-  line-height: 1.8;
 }
 
 .team-section {
@@ -1095,21 +1035,22 @@ button:focus-visible {
 }
 
 .advisor-card {
-  display: flex;
+  display: grid;
+  grid-template-columns: 180px 1fr;
   align-items: center;
-  gap: 24px;
-  max-width: 520px;
-  padding: 18px;
+  gap: 30px;
+  max-width: 760px;
+  padding: 22px;
   border: 1px solid #d6e0e2;
-  border-radius: 14px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.78);
 }
 
 .advisor-card img {
-  width: 112px;
-  height: 112px;
+  width: 180px;
+  height: 180px;
   flex: none;
-  border-radius: 14px;
+  border-radius: 16px;
   object-fit: cover;
   box-shadow: 0 18px 42px rgba(6, 30, 44, 0.12);
 }
@@ -1121,9 +1062,17 @@ button:focus-visible {
 .advisor-card h3 {
   margin: 8px 0 0;
   color: #122f40;
-  font-size: 28px;
+  font-size: 34px;
   letter-spacing: -0.045em;
   line-height: 1.1;
+}
+
+.advisor-card p {
+  max-width: 420px;
+  margin: 12px 0 0;
+  color: #61747e;
+  font-size: 13px;
+  line-height: 1.75;
 }
 
 .site-footer {
@@ -1329,10 +1278,6 @@ button:focus-visible {
   .team-hero {
     min-height: 0;
     padding: 112px 0 78px;
-  }
-
-  .team-card-inner {
-    padding: 28px;
   }
 
   .advisor-card {
