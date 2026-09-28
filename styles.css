@@ -785,13 +785,16 @@ button:focus-visible {
 
 .team-photo-shell {
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
+  grid-template-columns: 0.62fr 1.38fr;
   gap: 80px;
   align-items: center;
 }
 
 .team-photo-card {
-  width: min(100%, 520px);
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 30px;
+  width: min(100%, 820px);
   padding: 18px;
   border: 1px solid var(--line);
   border-radius: 28px;
@@ -802,13 +805,14 @@ button:focus-visible {
 .team-photo-card img {
   display: block;
   width: 100%;
+  max-width: 320px;
   aspect-ratio: 1;
   border-radius: 20px;
   object-fit: cover;
 }
 
 .team-photo-caption {
-  padding: 22px 8px 4px;
+  padding: 10px 8px 4px;
 }
 
 .team-photo-caption span {
@@ -826,6 +830,13 @@ button:focus-visible {
   font-size: 32px;
   line-height: 1.05;
   letter-spacing: -0.045em;
+}
+
+.team-photo-caption p {
+  margin: 16px 0 0;
+  color: #61747e;
+  font-size: 13px;
+  line-height: 1.78;
 }
 
 .early-access-section {
@@ -1179,11 +1190,13 @@ button:focus-visible {
   }
 
   .team-photo-card {
+    display: block;
     padding: 12px;
     border-radius: 22px;
   }
 
   .team-photo-card img {
+    max-width: none;
     border-radius: 16px;
   }
 
