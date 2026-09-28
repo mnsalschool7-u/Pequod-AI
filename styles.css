@@ -794,6 +794,35 @@ button:focus-visible {
   margin-top: 28px;
 }
 
+.team-photo-section {
+  padding: 118px 0;
+  background: var(--cream);
+}
+
+.team-photo-shell {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.team-photo-card {
+  width: min(100%, 520px);
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow);
+}
+
+.team-photo-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
 .early-access-section {
   background: var(--paper);
 }
@@ -1290,6 +1319,7 @@ button:focus-visible {
   .tech-layout,
   .story-shell,
   .early-access-shell,
+  .team-photo-shell,
   .team-hero-inner,
   .team-section-grid {
     grid-template-columns: 1fr;
@@ -1486,6 +1516,19 @@ button:focus-visible {
 
   .team-simple-card {
     max-width: 100%;
+  }
+
+  .team-photo-section {
+    padding: 78px 0;
+  }
+
+  .team-photo-card {
+    padding: 12px;
+    border-radius: 22px;
+  }
+
+  .team-photo-card img {
+    border-radius: 16px;
   }
 
   .advisor-card {
