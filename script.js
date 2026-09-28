@@ -3,7 +3,7 @@ document.documentElement.classList.add("js");
 const header = document.querySelector(".site-header");
 const menuButton = document.querySelector(".menu-button");
 const mobileMenu = document.querySelector(".mobile-menu");
-const waitlistForm = document.querySelector("#waitlist-form");
+const earlyAccessForm = document.querySelector("#early-access-form");
 const successState = document.querySelector("#success-state");
 const resetFormButton = document.querySelector("#reset-form");
 
@@ -64,7 +64,7 @@ if (reducedMotion || !("IntersectionObserver" in window)) {
   revealItems.forEach((item) => revealObserver.observe(item));
 }
 
-// Frontend-only waitlist validation and confirmation state.
+// Frontend-only early access validation and confirmation state.
 const requiredFields = ["name", "email", "company", "role"];
 
 function errorFor(field) {
@@ -89,7 +89,7 @@ function validateField(field) {
   return !message;
 }
 
-if (waitlistForm && successState && resetFormButton) {
+if (earlyAccessForm && successState && resetFormButton) {
   requiredFields.forEach((id) => {
     const field = document.querySelector(`#${id}`);
     field.addEventListener("blur", () => validateField(field));
@@ -101,7 +101,7 @@ if (waitlistForm && successState && resetFormButton) {
     });
   });
 
-  waitlistForm.addEventListener("submit", (event) => {
+  earlyAccessForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const fields = requiredFields.map((id) => document.querySelector(`#${id}`));
     const valid = fields.map(validateField).every(Boolean);
@@ -111,20 +111,20 @@ if (waitlistForm && successState && resetFormButton) {
       return;
     }
 
-    waitlistForm.hidden = true;
+    earlyAccessForm.hidden = true;
     successState.hidden = false;
     successState.querySelector("h3").focus?.();
   });
 
   resetFormButton.addEventListener("click", () => {
-    waitlistForm.reset();
+    earlyAccessForm.reset();
     requiredFields.forEach((id) => {
       const field = document.querySelector(`#${id}`);
       field.removeAttribute("aria-invalid");
       document.querySelector(`#${id}-error`).textContent = "";
     });
     successState.hidden = true;
-    waitlistForm.hidden = false;
+    earlyAccessForm.hidden = false;
     document.querySelector("#name").focus();
   });
 }
