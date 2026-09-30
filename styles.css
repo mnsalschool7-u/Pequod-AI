@@ -14,8 +14,8 @@
   --dark-line: rgba(170, 207, 227, 0.16);
   --success: #45b99a;
   --danger: #b45f59;
-  --shadow: 0 24px 80px rgba(5, 23, 36, 0.12);
-  --container: 1280px;
+  --shadow: 0 14px 36px rgba(5, 23, 36, 0.08);
+  --container: 1180px;
 }
 
 *,
@@ -148,7 +148,7 @@ a {
   width: 38px;
   height: 34px;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 7px;
   filter: drop-shadow(0 0 10px rgba(120, 184, 220, 0.24));
 }
 
@@ -197,11 +197,11 @@ a {
   font-size: 13px;
   font-weight: 750;
   text-decoration: none;
-  transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .button:hover {
-  transform: translateY(-2px);
+  box-shadow: none;
 }
 
 .button:focus-visible,
@@ -327,15 +327,15 @@ button:focus-visible {
 
 .hero {
   position: relative;
-  min-height: 850px;
-  padding: 162px 0 112px;
+  min-height: 760px;
+  padding: 150px 0 92px;
   overflow: hidden;
 }
 
 .hero-grid {
   position: absolute;
   inset: 0;
-  opacity: 0.18;
+  opacity: 0.11;
   background-image:
     linear-gradient(rgba(122, 178, 208, 0.14) 1px, transparent 1px),
     linear-gradient(90deg, rgba(122, 178, 208, 0.14) 1px, transparent 1px);
@@ -359,8 +359,8 @@ button:focus-visible {
   right: -240px;
   top: -220px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(78, 135, 174, 0.42), transparent 68%);
-  filter: blur(8px);
+  background: radial-gradient(circle, rgba(78, 135, 174, 0.24), transparent 68%);
+  filter: blur(12px);
 }
 
 .hero-layout {
@@ -375,10 +375,10 @@ button:focus-visible {
 .hero h1 {
   max-width: 720px;
   margin: 18px 0 0;
-  font-size: clamp(58px, 7.3vw, 104px);
-  font-weight: 500;
-  letter-spacing: -0.074em;
-  line-height: 0.96;
+  font-size: clamp(48px, 6.1vw, 82px);
+  font-weight: 600;
+  letter-spacing: -0.058em;
+  line-height: 1;
 }
 
 .hero-lede {
@@ -420,10 +420,10 @@ button:focus-visible {
 
 .exception-console {
   overflow: hidden;
-  border: 1px solid rgba(150, 190, 210, 0.16);
-  border-radius: 22px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
-  box-shadow: 0 26px 100px rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(150, 190, 210, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
 }
 
 .console-top {
@@ -469,7 +469,7 @@ button:focus-visible {
 .exception-alert {
   margin: 24px;
   padding: 28px;
-  border-radius: 18px;
+  border-radius: 12px;
 }
 
 .exception-alert span,
@@ -507,7 +507,7 @@ button:focus-visible {
 
 .signal-grid article {
   padding: 18px;
-  border-radius: 14px;
+  border-radius: 10px;
 }
 
 .signal-grid strong {
@@ -521,7 +521,7 @@ button:focus-visible {
 .resolution-card {
   margin: 12px 24px 24px;
   padding: 22px;
-  border-radius: 16px;
+  border-radius: 12px;
 }
 
 .resolution-card ol {
@@ -554,9 +554,9 @@ button:focus-visible {
 .section-heading h2 {
   margin: 16px 0 0;
   color: inherit;
-  font-size: clamp(42px, 5vw, 70px);
-  font-weight: 500;
-  letter-spacing: -0.062em;
+  font-size: clamp(36px, 4.2vw, 58px);
+  font-weight: 600;
+  letter-spacing: -0.052em;
   line-height: 1.03;
 }
 
@@ -588,9 +588,9 @@ button:focus-visible {
 
 .question-card {
   margin-top: 76px;
-  padding: 42px;
+  padding: 38px;
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: 14px;
   background: white;
   box-shadow: var(--shadow);
 }
@@ -607,8 +607,8 @@ button:focus-visible {
   display: block;
   margin-top: 26px;
   color: #122f40;
-  font-size: clamp(30px, 4.2vw, 58px);
-  letter-spacing: -0.055em;
+  font-size: clamp(28px, 3.4vw, 46px);
+  letter-spacing: -0.045em;
   line-height: 1;
 }
 
@@ -622,15 +622,13 @@ button:focus-visible {
 }
 
 .stats-section {
-  padding: 118px 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(244, 239, 230, 0.86)),
-    var(--paper);
+  padding: 104px 0;
+  background: var(--paper);
 }
 
 .stats-shell {
   display: grid;
-  gap: 58px;
+  gap: 42px;
 }
 
 .stats-grid {
@@ -640,20 +638,20 @@ button:focus-visible {
 }
 
 .stats-grid article {
-  min-height: 250px;
-  padding: 28px;
+  min-height: 205px;
+  padding: 24px;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 18px 60px rgba(5, 23, 36, 0.08);
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 10px 24px rgba(5, 23, 36, 0.05);
 }
 
 .stats-grid strong {
   display: block;
   color: #102b3b;
-  font-size: clamp(40px, 4.4vw, 66px);
-  font-weight: 500;
-  letter-spacing: -0.065em;
+  font-size: clamp(36px, 3.8vw, 54px);
+  font-weight: 650;
+  letter-spacing: -0.052em;
   line-height: 0.95;
 }
 
@@ -673,7 +671,7 @@ button:focus-visible {
 .from-to-card div {
   padding: 24px;
   border: 1px solid rgba(150, 190, 210, 0.16);
-  border-radius: 16px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -705,9 +703,9 @@ button:focus-visible {
 
 .issue-grid article,
 .workflow-grid article {
-  min-height: 260px;
+  min-height: 225px;
   padding: 28px;
-  border-radius: 14px;
+  border-radius: 10px;
 }
 
 .issue-grid article {
@@ -806,9 +804,9 @@ button:focus-visible {
 }
 
 .tech-card {
-  padding: 40px;
+  padding: 36px;
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: 14px;
   background: white;
   box-shadow: var(--shadow);
 }
@@ -822,7 +820,7 @@ button:focus-visible {
 }
 
 .team-photo-section {
-  padding: 118px 0;
+  padding: 104px 0;
   background: var(--cream);
 }
 
@@ -843,25 +841,25 @@ button:focus-visible {
 .team-photo-card {
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: 24px;
+  gap: 20px;
   width: 100%;
-  padding: 24px;
+  padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.72);
+  border-radius: 14px;
+  background: white;
   box-shadow: var(--shadow);
 }
 
 .team-photo-card img {
   display: block;
   width: 100%;
-  aspect-ratio: 1.12;
-  border-radius: 20px;
+  aspect-ratio: 1.08;
+  border-radius: 10px;
   object-fit: cover;
 }
 
 .team-photo-caption {
-  padding: 14px 8px 4px;
+  padding: 0 2px 4px;
 }
 
 .team-photo-caption span {
@@ -876,16 +874,16 @@ button:focus-visible {
 .team-photo-caption h3 {
   margin: 8px 0 0;
   color: #102b3b;
-  font-size: 32px;
+  font-size: 26px;
   line-height: 1.05;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.035em;
 }
 
 .team-photo-caption p {
-  margin: 16px 0 0;
+  margin: 14px 0 0;
   color: #61747e;
-  font-size: 14px;
-  line-height: 1.82;
+  font-size: 13px;
+  line-height: 1.7;
 }
 
 .early-access-section {
@@ -894,9 +892,9 @@ button:focus-visible {
 
 .early-access-copy h2 {
   margin: 16px 0 0;
-  font-size: clamp(42px, 5vw, 70px);
-  font-weight: 500;
-  letter-spacing: -0.062em;
+  font-size: clamp(36px, 4.2vw, 58px);
+  font-weight: 600;
+  letter-spacing: -0.052em;
   line-height: 1.03;
 }
 
