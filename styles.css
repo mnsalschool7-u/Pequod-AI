@@ -811,6 +811,31 @@ button:focus-visible {
   box-shadow: var(--shadow);
 }
 
+.technology-partner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--line);
+}
+
+.technology-partner span {
+  color: #61747e;
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.technology-partner img {
+  display: block;
+  width: 172px;
+  max-width: 100%;
+  height: auto;
+}
+
 .tech-card p + p {
   margin-top: 18px;
 }
