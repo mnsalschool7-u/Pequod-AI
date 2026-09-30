@@ -621,6 +621,49 @@ button:focus-visible {
   line-height: 1.8;
 }
 
+.stats-section {
+  padding: 118px 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(244, 239, 230, 0.86)),
+    var(--paper);
+}
+
+.stats-shell {
+  display: grid;
+  gap: 58px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stats-grid article {
+  min-height: 250px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 60px rgba(5, 23, 36, 0.08);
+}
+
+.stats-grid strong {
+  display: block;
+  color: #102b3b;
+  font-size: clamp(40px, 4.4vw, 66px);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 0.95;
+}
+
+.stats-grid p {
+  margin: 28px 0 0;
+  color: #61747e;
+  font-size: 13px;
+  line-height: 1.75;
+}
+
 .from-to-card {
   display: grid;
   gap: 12px;
@@ -1062,6 +1105,7 @@ button:focus-visible {
     gap: 46px;
   }
 
+  .stats-grid,
   .issue-grid,
   .workflow-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1144,6 +1188,7 @@ button:focus-visible {
 
   .signal-grid,
   .form-row,
+  .stats-grid,
   .issue-grid,
   .workflow-grid,
   .consequence-chain {
@@ -1160,6 +1205,7 @@ button:focus-visible {
   }
 
   .problem-section,
+  .stats-section,
   .workflow-section,
   .technology-section,
   .early-access-section,
