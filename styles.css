@@ -858,7 +858,7 @@ button:focus-visible {
 
 .team-photo-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 420px);
   gap: 16px;
   align-items: stretch;
 }
